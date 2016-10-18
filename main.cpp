@@ -1,13 +1,11 @@
 // main.cpp
 // Nathaniel Pohl 11/24/2015
-// This file contains the logic to read in the command file and then spin off
-// a thread pool, and than complete the work that is assigned in the command 
-// file that is passed in on the command line.
+// This file contains the logic to read in the command file and then 
+// spin off a thread pool, and than complete the work that is assigned
+// in the command file that is passed in on the command line.
 
-#include "cmd.h"
-//#include "checksum.h"
-//#include "wordcount.h"
-//#include "wordfreq.h"
+#include "Command.h"
+#include "VirtualConstructor.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -15,24 +13,22 @@
 
 using namespace std;
 
-const int POOL_THREAD_COUNT = 16;
+static const int POOL_THREAD_COUNT = 4;
 
 struct threadInfo {
 	int threadId;
 	istream* file;
-}typedef threadInfo;
+};
 
 void* thread_routine(void* data){
-	threadInfo* info = (threadInfo*) data;
-	Command* currentCommand = NULL;
+	threadInfo* info = static_cast<threadInfo*>(data);
 
 	while (true){
-		currentCommand = VirtualConstructor::instance()->getCommand(
-				info->file);
-		if(currentCommand == NULL){
+		Command* currentCommand = VirtualConstructor::instance()->createCommand(info->file);
+		if(!currentCommand)
 			break;
-		}
-		currentCommand->execute();	
+
+		currentCommand->execute();
 		delete currentCommand;
 	}
 	
@@ -44,7 +40,6 @@ int main(int argc, char* argv[]){
 	pthread_attr_t attr;
 	threadInfo info[POOL_THREAD_COUNT];
 	int res;
-	ifstream commandFile;
 	void* status = NULL;
 
 	if(argc != 2){
@@ -52,7 +47,7 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 
-	commandFile.open(argv[1]);
+	ifstream commandFile(argv[1]);
 
 	if(!commandFile.is_open()){
 		cout << "Error: Can't open file." << endl;
@@ -70,7 +65,7 @@ int main(int argc, char* argv[]){
 			cout << "Error: Can't create thread: " << i << endl;
 		}
 	}
-	
+
 	pthread_attr_destroy(&attr);
 
 	for(int i = 0; i < POOL_THREAD_COUNT; i++){
@@ -80,7 +75,8 @@ int main(int argc, char* argv[]){
 		}
 	}
 	
-	commandFile.close();
+	//~ commandFile.close();
 
 	pthread_exit(NULL);
 }
+

@@ -1,9 +1,10 @@
 CC=g++
-FLAGS=-Wall -Wextra -std=c++11
-objects= main.o cmd.o checksum.o wordcount.o wordfreq.o
+FLAGS=-Wall -Wextra -std=c++11 -pthread
+src=$(wildcard *.cpp)
+objects= $(src:.cpp=.o)
 
-cmdEx: $(objects)
-	$(CC) -o $(FLAGS) $@ $?
+Command: $(objects)
+	$(CC) -o Command $(FLAGS)  $?
 
 .cpp.o:
 	$(CC) -c $(FLAGS) $<
