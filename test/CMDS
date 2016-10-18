@@ -1,0 +1,23 @@
+# Here is a comment
+# This test file is for sanity testing inputs and whitespaces.
+# Here are checksums with spaces added to various places
+CHECKSUM,/home/napo/code/logrhythm/test/words
+  CHECKSUM,/home/napo/code/logrhythm/test/words
+CHECKSUM    ,/home/napo/code/logrhythm/test/words
+CHECKSUM,    /home/napo/code/logrhythm/test/words
+CHECKSUM,/home/napo/code/logrhythm/test/words     
+
+# Here are checksums with tabs added to various places
+CHECKSUM,/home/napo/code/logrhythm/test/words
+CHECKSUM,/home/napo/code/logrhythm/test/words
+		CHECKSUM,/home/napo/code/logrhythm/test/words
+CHECKSUM		,/home/napo/code/logrhythm/test/words
+CHECKSUM,		/home/napo/code/logrhythm/test/words
+CHECKSUM,/home/napo/code/logrhythm/test/words
+
+# Here are commands that aren't registered
+checksum,/home/napo/code/logrhythm/test/words
+superawesome ,	/home/napo/code/logrhtyhm/test/words
+
+# Here are commands with bad files
+CHECKSUM,/home/napo/code/logrythm/test/THEREISNOTHINGHERE
