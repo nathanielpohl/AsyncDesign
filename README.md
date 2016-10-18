@@ -1,9 +1,6 @@
 # AsyncDesign
 An asynchronous, independent, command running program.
 
-
-==
-
 ## Make Instruction:
 
 ### Dependancies: 
@@ -11,8 +8,8 @@ g++ compiler that implements c++11 or greater
 pthreads
 ### To make run:
 ```bash
-		make
-		./Command <command file>
+make
+./Command <command file>
 ```
 
 
