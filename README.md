@@ -4,8 +4,7 @@ An asynchronous, independent-command running program.
 ## Make Instruction:
 
 ### Dependancies: 
-g++ compiler that implements c++11 or greater
-pthreads
+g++ compiler that implements c++11 or greater and pthreads
 ### To make run:
 ```bash
 make
