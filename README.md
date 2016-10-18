@@ -1,5 +1,5 @@
 # AsyncDesign
-An asynchronous, independent, command running program.
+An asynchronous, independent-command running program.
 
 ## Make Instruction:
 
