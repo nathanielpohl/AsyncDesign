@@ -1,25 +1,20 @@
 # AsyncDesign
 An asynchronous, independent, command running program.
+==
 
-CONTENTS:
-	1. Make Instructions
-	2. Overview
-	3. Assumptions
-	4. Extending New Commands
-	5. Future Thoughts
-	6. Class Diagram
+## Make Instruction:
 
-
-1. Make Instruction:
-	Dependancies: 
-		g++ compiler that implements c++11 or greater
-		pthreads
-	To make run:
+### Dependancies: 
+g++ compiler that implements c++11 or greater
+pthreads
+### To make run:
+```bash
 		make
 		./Command <command file>
+```
 
 
-2. Overview:
+## Overview:
 My implementation spins off a thread pool. Each thread invokes the 
 VirtualConstructor singleton class to create a new command. The threads pass an 
 istream* to the VirtualConstructor so that the input file can be arbitrarely
@@ -29,7 +24,7 @@ Command derivatie is identified in the member variable registy<string,command*>
 and cloned. This new Command is then passed back to the thread to be exicuted.
 
 
-3. Assumptions:
+## Assumptions:
 -The number of threads will be constant the entire run time.
 -Commands will only read from files, never write.
 -Whitespace in a command file is unimportant.
@@ -42,7 +37,7 @@ and cloned. This new Command is then passed back to the thread to be exicuted.
 	reported to std::out.
 
 
-4. Extending New Commands:
+## Extending New Commands:
 To extend my implementation just create a new <class>.h and <class>.cpp and
 inherate one of the abstracts; Command or FileCommand. Make sure to implament 
 a constructor that takes a VirtualConstructor*, and to create a global instance
@@ -51,7 +46,7 @@ will automatically pick up new *.cpp file, and the VirtualConstructor singleton
 will keep track of the newly registered command.
 
 
-5. Future Thoughts:
+## Future Thoughts:
 -Create another abstract class from Command that will keep track of input files
 	and mutexes so that it can be derived into a class that allows writing
 	to files to be thread safe.
@@ -72,8 +67,9 @@ will keep track of the newly registered command.
 	sources.
 
 
-6. Class Diagram: 
+## Class Diagram: 
 
+```
  +-------+  n           1  +---------------------+    uses
  |Command|<---------------O|VirtualConstructor   |----------+
  +-------+                 +---------------------+          |
@@ -97,3 +93,4 @@ will keep track of the newly registered command.
     |             |            |           |
     +-------------+------------+-----------+
               registers
+```
