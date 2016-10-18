@@ -20,4 +20,37 @@ checksum,/home/napo/code/logrhythm/test/words
 superawesome ,	/home/napo/code/logrhtyhm/test/words
 
 # Here are commands with bad files
-CHECKSUM,/home/napo/code/logrythm/test/THEREISNOTHINGHERE
+CHECKSUM,/home/napo/code/logrhythm/test/THEREISNOTHINGHERE
+
+# Here are someof the other commands
+WORDFREQ,/home/napo/code/logrhythm/test/words,hello
+WORDFREQ,	 /home/napo/code/logrhythm/test/words1,  hello
+WORDFREQ,/home/napo/code/logrhythm/test/words2   ,hello
+WORDFREQ	,	/home/napo/code/logrhythm/test/words3,hello
+WORDFREQ   ,   /home/napo/code/logrhythm/test/words4	,	hello	 	 	 
+WORDFREQ,/home/napo/code/logrhythm/test/words5   , hello 
+
+WORDCOUNT,/home/napo/code/logrhythm/test/words
+WORDCOUNT  ,/home/napo/code/logrhythm/test/words1
+WORDCOUNT,		/home/napo/code/logrhythm/test/words2
+WORDCOUNT				,/home/napo/code/logrhythm/test/words3
+WORDCOUNT,/home/napo/code/logrhythm/test/words4 	 	 	 	
+   				 WORDCOUNT,/home/napo/code/logrhythm/test/words5
+# And some commands on a long file
+CHECKSUM,/home/napo/code/logrhythm/test/augustine-confessions.txt
+WORDCOUNT,/home/napo/code/logrhythm/test/augustine-confessions.txt
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,hello
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,the
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,e
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,and
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,zebra
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,.
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,CHAPTER
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,How
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,who
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,rejoice
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,
+WORDFREQ,/home/napo/code/logrhythm/test/augustine-confessions.txt,hello
