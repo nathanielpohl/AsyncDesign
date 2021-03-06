@@ -27,6 +27,8 @@ fi
 # Clone and build the project.
 cd ~/code
 git clone git@github.com:nathanielpohl/AsyncDesign.git ./AsyncDesign
+git config --global user.email "nathaniel.pohl@gmail.com"
+git config --global user.name "Nathaniel Pohl"
 cd ./AsyncDesign
 mkdir build && cd build
 cmake -G "Ninja"  ..

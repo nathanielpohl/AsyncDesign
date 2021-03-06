@@ -3,7 +3,7 @@ get_filename_component(LIBRARY_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
 project(${LIBRARY_NAME})
 
-# Create lists or our files for this library.
+# Create lists of our files for this library.
 set(HEADER_FILES
     inc/tools/csv_parser.h
     )
