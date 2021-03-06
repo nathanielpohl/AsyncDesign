@@ -1,44 +1,42 @@
-// main.cpp
-// Nathaniel Pohl 11/24/2015
 // This file contains the logic to read in the command file and then 
 // spin off a thread pool, and than complete the work that is assigned
 // in the command file that is passed in on the command line.
-
-#include "Command.h"
-#include "VirtualConstructor.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <pthread.h>
 
+#include "cmd_modules/command.h"
+#include "cmd_modules/virtual_constructor.h"
+
 using namespace std;
 
-static const int POOL_THREAD_COUNT = 4;
+static const int kPoolThreadCount = 4;
 
-struct threadInfo {
-	int threadId;
+struct ThreadInfo {
+	int thread_id;
 	istream* file;
 };
 
-void* thread_routine(void* data){
-	threadInfo* info = static_cast<threadInfo*>(data);
+void* ThreadRoutine(void* data){
+	ThreadInfo* info = static_cast<ThreadInfo*>(data);
 
 	while (true){
-		Command* currentCommand = VirtualConstructor::instance()->createCommand(info->file);
-		if(!currentCommand)
+		cmd_modules::Command* current_command = cmd_modules::VirtualConstructor::Instance()->CreateCommand(info->file);
+		if(!current_command)
 			break;
 
-		currentCommand->execute();
-		delete currentCommand;
+		current_command->Execute();
+		delete current_command;
 	}
 	
 	pthread_exit(NULL);
 }
 
 int main(int argc, char* argv[]){
-	pthread_t thread[POOL_THREAD_COUNT];
+	pthread_t thread[kPoolThreadCount];
 	pthread_attr_t attr;
-	threadInfo info[POOL_THREAD_COUNT];
+	ThreadInfo info[kPoolThreadCount];
 	int res;
 	void* status = NULL;
 
@@ -47,19 +45,19 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 
-	ifstream commandFile(argv[1]);
+	ifstream command_file(argv[1]);
 
-	if(!commandFile.is_open()){
+	if(!command_file.is_open()){
 		cout << "Error: Can't open file." << endl;
 		return 1;
 	}
 
 	pthread_attr_init(&attr);
 
-	for(int i = 0; i < POOL_THREAD_COUNT; i++){
-		info[i].threadId = i;
-		info[i].file = &commandFile;
-		res = pthread_create(&thread[i], &attr, thread_routine,
+	for(int i = 0; i < kPoolThreadCount; i++){
+		info[i].thread_id = i;
+		info[i].file = &command_file;
+		res = pthread_create(&thread[i], &attr, ThreadRoutine,
 				(void *) &info[i]);
 		if(res){
 			cout << "Error: Can't create thread: " << i << endl;
@@ -68,7 +66,7 @@ int main(int argc, char* argv[]){
 
 	pthread_attr_destroy(&attr);
 
-	for(int i = 0; i < POOL_THREAD_COUNT; i++){
+	for(int i = 0; i < kPoolThreadCount; i++){
 		pthread_join(thread[i], &status);
 		if(status){
 			cout << "Error: Joining thread: " << i << endl;

@@ -1,10 +1,10 @@
-// Checksum.cpp
-// Nathaniel Pohl 11/26/2015
 // This file contains the class derivative implmentation of a checksum 
 // command.
-#include "Checksum.h"
+#include "cmd_modules/checksum.h"
+
 #include <time.h>
 
+namespace cmd_modules {
 using namespace std;
 
 // Credit for the precomputed table:
@@ -45,15 +45,15 @@ static const unsigned char crc8[256] =
         0xE6, 0xE1, 0xE8, 0xEF, 0xFA, 0xFD, 0xF4, 0xF3
 };
 
-void Checksum::deserialize(CSVParser &params){
-	filename = params.next();
-};
+void Checksum::Deserialize(tools::CSVParser &params){
+	filename_ = params.Next();
+}
 
-int Checksum::execute(){
-	ifstream file(filename, ifstream::in);
+int Checksum::Execute(){
+	ifstream file(filename_, ifstream::in);
 
 	if(!file.is_open()){
-		string error = "Error: Can't open file: " + filename + "\n";
+		string error = "Error: Can't open file: " + filename_ + "\n";
 		cout << error;
 		return -1;
 	}
@@ -63,7 +63,7 @@ int Checksum::execute(){
 
 	while(getline(file, line)){
 		for(size_t i = 0; i < line.length(); i++){
-			checksum = crc8[checksum ^ (line[i])];
+			checksum_ = crc8[checksum_ ^ (line[i])];
 		}
 	}
 
@@ -71,12 +71,12 @@ int Checksum::execute(){
 	double seconds = double(time)/CLOCKS_PER_SEC;
 
 	// Single prints are viewed as atomic, create a string, and print it
-	string output = getId() + ", " + filename + ", " + 
-		to_string(int(checksum)) + ", " + to_string(seconds) + "\n";
+	string output = GetId() + ", " + filename_ + ", " + 
+		to_string(int(checksum_)) + ", " + to_string(seconds) + "\n";
 	cout << output;
 
 	return 0;
-};
+}
 
-Checksum ChecksumType(VirtualConstructor::instance());
-
+Checksum ChecksumType(VirtualConstructor::Instance());
+}
