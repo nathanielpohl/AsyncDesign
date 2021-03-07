@@ -6,6 +6,7 @@ project(${LIBRARY_NAME})
 # Create lists of our files for this library.
 set(HEADER_FILES
     inc/tools/csv_parser.h
+    inc/tools/str_tools.h
     )
 
 set(SOURCE_FILES

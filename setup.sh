@@ -1,7 +1,7 @@
 # Update and upgrade
 sudo apt update
 sudo apt upgrade
-sudo apt install cmake cmake-curses-gui g++ gcc git make ninja-build perl ripgrep vim
+sudo apt install clang-format cmake cmake-curses-gui g++ gcc git make ninja-build perl ripgrep vim
 
 # Create directories
 FILE=~/code
@@ -12,8 +12,12 @@ fi
 # Manually run steps
 FILE=~/qtcreator-4.4.1
 if [ ! -d "$FILE" ]; then
-	printf "\n\nDownload QT creator: https://download.qt.io/archive/qtcreator/\n\n"
-	printf "\n\nBugMeNot: http://bugmenot.com/view/qt.io\n\n"
+	printf "\n\n"
+	printf "Download QT creator: https://download.qt.io/archive/qtcreator/"
+	printf "BugMeNot: http://bugmenot.com/view/qt.io"
+	printf "Set theme and Enalbe beautifier, restart qt"
+	printf "Tools -> Options -> Beautifier -> Clang Format -> Google/auto"
+	printf "\n\n"
 fi
 
 # Set up github
