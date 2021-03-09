@@ -2,9 +2,8 @@
 // have to register with to be recognized by main program.
 #pragma once
 
-#include <pthread.h>
-
 #include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 
@@ -25,7 +24,7 @@ class VirtualConstructor {
       CommandRegistry;
 
   CommandRegistry registry_;
-  pthread_mutex_t mtx_;
+  std::mutex mtx_;
 
   VirtualConstructor();
 };

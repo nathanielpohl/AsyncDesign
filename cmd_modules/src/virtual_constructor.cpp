@@ -10,10 +10,10 @@
 
 namespace cmd_modules {
 //=============================================================================
-VirtualConstructor::VirtualConstructor() { pthread_mutex_init(&mtx_, NULL); }
+VirtualConstructor::VirtualConstructor() = default;
 
 //=============================================================================
-VirtualConstructor::~VirtualConstructor() { pthread_mutex_destroy(&mtx_); }
+VirtualConstructor::~VirtualConstructor() = default;
 
 //=============================================================================
 void VirtualConstructor::Init() {
@@ -44,9 +44,9 @@ tools::Command* VirtualConstructor::CreateCommand(std::istream* command_file) {
       return NULL;
     }
 
-    pthread_mutex_lock(&mtx_);
+    mtx_.lock();
     getline(*command_file, next_command);
-    pthread_mutex_unlock(&mtx_);
+    mtx_.unlock();
 
     if (next_command.empty() || (next_command[0] == '#')) {
       continue;
