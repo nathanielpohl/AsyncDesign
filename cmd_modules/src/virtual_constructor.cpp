@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 
+#include "cmd_modules/command_modules.h"
 #include "tools/csv_parser.h"
 
 namespace cmd_modules {
@@ -15,6 +16,17 @@ VirtualConstructor::VirtualConstructor() { pthread_mutex_init(&mtx_, NULL); }
 VirtualConstructor::~VirtualConstructor() { pthread_mutex_destroy(&mtx_); }
 
 //=============================================================================
+void VirtualConstructor::Init() {
+#define REGISTER_COMMAND(scope, name, command_id)             \
+  do {                                                        \
+    auto COMMAND_##name = std::make_unique<name>(command_id); \
+    registry_[command_id] = std::move(COMMAND_##name);        \
+  } while (0);
+  LIST_OF_COMMANDS(REGISTER_COMMAND);
+#undef REGISTER_COMMAND
+}
+
+//=============================================================================
 VirtualConstructor* VirtualConstructor::Instance() {
   if (!object_) object_ = new VirtualConstructor;
 
@@ -22,14 +34,9 @@ VirtualConstructor* VirtualConstructor::Instance() {
 }
 
 //=============================================================================
-void VirtualConstructor::RegisterCommand(Command* cmd) {
-  registry_[cmd->GetId()] = cmd;
-}
-
-//=============================================================================
 Command* VirtualConstructor::CreateCommand(istream* command_file) {
   tools::CSVParser params;
-  Command* next_command = NULL;
+  std::string next_command;
 
   // Get a line that isn't commented or empty
   do {
@@ -37,30 +44,27 @@ Command* VirtualConstructor::CreateCommand(istream* command_file) {
       return NULL;
     }
 
-    std::string str;
     pthread_mutex_lock(&mtx_);
-    getline(*command_file, str);
+    getline(*command_file, next_command);
     pthread_mutex_unlock(&mtx_);
 
-    if (str.empty() || (str[0] == '#')) {
+    if (next_command.empty() || (next_command[0] == '#')) {
       continue;
     }
 
-    params.SetRow(str);
-    str = params.Next();
+    params.SetRow(next_command);
+    next_command = params.Next();
 
-    CommandRegistry::const_iterator iter = registry_.find(str);
+    CommandRegistry::const_iterator iter = registry_.find(next_command);
     if (iter == registry_.end()) {
-      str = "Error: Unregistered command: " + str + "\n";
-      std::cout << str;
+      std::cout << "Error: Unregistered command: " + next_command + "\n";
       continue;
     }
-    next_command = registry_[str];
-  } while (!next_command);
+  } while (!registry_[next_command]);
 
-  next_command = next_command->Clone();
-  next_command->Deserialize(params);
-  return next_command;
+  auto cloned_command = registry_[next_command]->Clone();
+  cloned_command->Deserialize(params);
+  return cloned_command;
 }
 
 //=============================================================================

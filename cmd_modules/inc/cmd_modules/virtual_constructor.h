@@ -3,6 +3,8 @@
 #pragma once
 
 #include <pthread.h>
+
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -12,19 +14,20 @@ namespace cmd_modules {
 using namespace std;
 
 class VirtualConstructor {
-	static VirtualConstructor* object_;
+ public:
+  ~VirtualConstructor();
+  void Init();
+  static VirtualConstructor* Instance();
+  Command* CreateCommand(istream*);
 
-	typedef unordered_map<string, Command*> CommandRegistry;
+ private:
+  static VirtualConstructor* object_;
 
-	CommandRegistry registry_;
-	pthread_mutex_t mtx_;
+  typedef unordered_map<string, std::unique_ptr<Command>> CommandRegistry;
 
-	VirtualConstructor();
-public:
-	~VirtualConstructor();
-	static VirtualConstructor* Instance();
-	void RegisterCommand(Command *cmd);
-	Command* CreateCommand(istream*);
+  CommandRegistry registry_;
+  pthread_mutex_t mtx_;
+
+  VirtualConstructor();
 };
-}
-
+}  // namespace cmd_modules

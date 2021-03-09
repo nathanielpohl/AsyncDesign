@@ -3,23 +3,20 @@
 
 #include <string>
 
+#include "cmd_modules/file_command.h"
+#include "cmd_modules/virtual_constructor.h"
 #include "tools/csv_parser.h"
 
-#include "cmd_modules/virtual_constructor.h"
-#include "cmd_modules/file_command.h"
-
 namespace cmd_modules {
-class Checksum: public FileCommand{
-public:
-	Checksum(){ checksum_ = 0;}
-	Checksum(VirtualConstructor* VC)
-		{VC->RegisterCommand(this);}
-	Checksum* Clone(){ return new Checksum;}
-	void Deserialize(tools::CSVParser &params);
-	int Execute();
-	std::string GetId(){ return "CHECKSUM";}
-private:
-	unsigned char checksum_;
+class Checksum : public FileCommand {
+ public:
+  Checksum(std::string command_id);
+  Checksum* Clone() { return new Checksum(command_id_); }
+  void Deserialize(tools::CSVParser& params);
+  int Execute();
+
+ private:
+  unsigned char checksum_;
 };
 
-}
+}  // namespace cmd_modules
