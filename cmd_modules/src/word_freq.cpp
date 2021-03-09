@@ -6,6 +6,11 @@
 
 namespace cmd_modules {
 //=============================================================================
+WordFreq::WordFreq(std::string command_id) : freq_count_(0) {
+  command_id_ = command_id;
+}
+
+//=============================================================================
 void WordFreq::Deserialize(tools::CSVParser &params) {
   filename_ = params.Next();
   word_ = params.Next();
@@ -45,7 +50,4 @@ int WordFreq::Execute() {
 
   return 0;
 }
-
-//=============================================================================
-WordFreq WordFreqType(VirtualConstructor::Instance());
 }  // namespace cmd_modules

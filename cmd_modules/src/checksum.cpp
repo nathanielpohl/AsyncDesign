@@ -33,6 +33,11 @@ static const unsigned char crc8[256] = {
     0xFA, 0xFD, 0xF4, 0xF3};
 
 //=============================================================================
+Checksum::Checksum(std::string command_id) : checksum_(0) {
+  command_id_ = command_id;
+}
+
+//=============================================================================
 void Checksum::Deserialize(tools::CSVParser &params) {
   filename_ = params.Next();
 }
@@ -67,7 +72,4 @@ int Checksum::Execute() {
 
   return 0;
 }
-
-//=============================================================================
-Checksum ChecksumType(VirtualConstructor::Instance());
 }  // namespace cmd_modules

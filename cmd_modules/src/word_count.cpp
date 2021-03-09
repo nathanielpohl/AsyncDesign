@@ -8,6 +8,11 @@
 
 namespace cmd_modules {
 //=============================================================================
+WordCount::WordCount(std::string command_id) : word_count_(0) {
+  command_id_ = command_id;
+}
+
+//=============================================================================
 void WordCount::Deserialize(tools::CSVParser &params) {
   filename_ = params.Next();
 }
@@ -40,7 +45,4 @@ int WordCount::Execute() {
 
   return 0;
 }
-
-//=============================================================================
-WordCount WordCountType(VirtualConstructor::Instance());
 }  // namespace cmd_modules

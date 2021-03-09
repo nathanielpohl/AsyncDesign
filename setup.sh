@@ -1,7 +1,7 @@
 # Update and upgrade
-sudo apt update
-sudo apt upgrade
-sudo apt install clang-format cmake cmake-curses-gui g++ gcc git make ninja-build perl ripgrep vim
+sudo apt update -qq
+sudo apt upgrade -qq -y
+sudo apt install -qq -y ccache clang-format cmake cmake-curses-gui g++ gcc git make ninja-build perl ripgrep vim
 
 # Create directories
 FILE=~/code
@@ -13,10 +13,10 @@ fi
 FILE=~/qtcreator-4.4.1
 if [ ! -d "$FILE" ]; then
 	printf "\n\n"
-	printf "Download QT creator: https://download.qt.io/archive/qtcreator/"
-	printf "BugMeNot: http://bugmenot.com/view/qt.io"
-	printf "Set theme and Enalbe beautifier, restart qt"
-	printf "Tools -> Options -> Beautifier -> Clang Format -> Google/auto"
+	printf "Download QT creator: https://download.qt.io/archive/qtcreator/\n"
+	printf "BugMeNot: http://bugmenot.com/view/qt.io\n"
+	printf "Set theme and Enalbe beautifier, restart qt\n"
+	printf "Tools -> Options -> Beautifier -> Clang Format -> Google/autosave\n"
 	printf "\n\n"
 fi
 
@@ -34,5 +34,6 @@ git clone git@github.com:nathanielpohl/AsyncDesign.git ./AsyncDesign
 git config --global user.email "nathaniel.pohl@gmail.com"
 git config --global user.name "Nathaniel Pohl"
 cd ./AsyncDesign
-mkdir build && cd build
+mkdir -p build && cd build
 cmake -G "Ninja"  ..
+ninja

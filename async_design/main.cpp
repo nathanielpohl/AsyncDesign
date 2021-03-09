@@ -10,14 +10,12 @@
 #include "cmd_modules/command.h"
 #include "cmd_modules/virtual_constructor.h"
 
-using namespace std;
-
 static const int kPoolThreadCount = 4;
 
 //=============================================================================
 struct ThreadInfo {
   int thread_id;
-  istream* file;
+  std::istream* file;
 };
 
 //=============================================================================
@@ -44,15 +42,18 @@ int main(int argc, char* argv[]) {
   int res;
   void* status = NULL;
 
+  // Initialize the virtual constructor class.
+  cmd_modules::VirtualConstructor::Instance()->Init();
+
   if (argc != 2) {
-    cout << "Usage: cmdEx <command File>" << endl;
+    std::cout << "Usage: Command <command File>" << std::endl;
     return 1;
   }
 
-  ifstream command_file(argv[1]);
+  std::ifstream command_file(argv[1]);
 
   if (!command_file.is_open()) {
-    cout << "Error: Can't open file." << endl;
+    std::cout << "Error: Can't open file." << std::endl;
     return 1;
   }
 
@@ -63,7 +64,8 @@ int main(int argc, char* argv[]) {
     info[i].file = &command_file;
     res = pthread_create(&thread[i], &attr, ThreadRoutine, (void*)&info[i]);
     if (res) {
-      cout << "Error: Can't create thread: " << i << endl;
+      std::cout << "Error: Can't create thread: " << std::to_string(i)
+                << std::endl;
     }
   }
 
@@ -72,11 +74,11 @@ int main(int argc, char* argv[]) {
   for (int i = 0; i < kPoolThreadCount; i++) {
     pthread_join(thread[i], &status);
     if (status) {
-      cout << "Error: Joining thread: " << i << endl;
+      std::cout << "Error: Joining thread: " << std::to_string(i) << std::endl;
     }
   }
 
-  //~ commandFile.close();
+  command_file.close();
 
   pthread_exit(NULL);
 }

@@ -7,6 +7,7 @@ project(${LIBRARY_NAME})
 set(HEADER_FILES
     inc/cmd_modules/checksum.h
     inc/cmd_modules/command.h
+    inc/cmd_modules/command_modules.h
     inc/cmd_modules/file_command.h
     inc/cmd_modules/virtual_constructor.h
     inc/cmd_modules/word_count.h
