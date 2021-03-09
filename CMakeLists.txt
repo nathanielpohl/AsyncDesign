@@ -13,5 +13,6 @@ project (command)
 # Submodules of async_design
 add_subdirectory(tools)
 #add_subdirectory(thirdparty)
+add_subdirectory(fpic_modules)
 add_subdirectory(cmd_modules)
 add_subdirectory(async_design)

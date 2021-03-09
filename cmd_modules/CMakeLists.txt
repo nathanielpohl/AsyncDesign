@@ -6,9 +6,7 @@ project(${LIBRARY_NAME})
 # Create lists of our files for this library.
 set(HEADER_FILES
     inc/cmd_modules/checksum.h
-    inc/cmd_modules/command.h
     inc/cmd_modules/command_modules.h
-    inc/cmd_modules/file_command.h
     inc/cmd_modules/virtual_constructor.h
     inc/cmd_modules/word_count.h
     inc/cmd_modules/word_freq.h
@@ -29,6 +27,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/inc)
 
 # Link to libraries that this library ueses.
 target_link_libraries(${LIBRARY_NAME}
+    fpic_modules
     tools
     #thirdparty
     )

@@ -1,52 +1,38 @@
 // This file contains the logic to read in the command file and then
 // spin off a thread pool, and than complete the work that is assigned
 // in the command file that is passed in on the command line.
-#include <pthread.h>
 
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <thread>
 
-#include "cmd_modules/command.h"
 #include "cmd_modules/virtual_constructor.h"
+#include "tools/command.h"
 
-static const int kPoolThreadCount = 4;
-
-//=============================================================================
-struct ThreadInfo {
-  int thread_id;
-  std::istream* file;
-};
+static const int kPoolThreadCount = std::thread::hardware_concurrency();
 
 //=============================================================================
-void* ThreadRoutine(void* data) {
-  ThreadInfo* info = static_cast<ThreadInfo*>(data);
-
+void ThreadRoutine(std::istream* file) {
   while (true) {
-    cmd_modules::Command* current_command =
-        cmd_modules::VirtualConstructor::Instance()->CreateCommand(info->file);
+    tools::Command* current_command =
+        cmd_modules::VirtualConstructor::Instance()->CreateCommand(file);
     if (!current_command) break;
 
     current_command->Execute();
     delete current_command;
   }
-
-  pthread_exit(NULL);
 }
 
 //=============================================================================
 int main(int argc, char* argv[]) {
-  pthread_t thread[kPoolThreadCount];
-  pthread_attr_t attr;
-  ThreadInfo info[kPoolThreadCount];
-  int res;
-  void* status = NULL;
+  std::vector<std::thread> thread_pool(kPoolThreadCount);
 
   // Initialize the virtual constructor class.
   cmd_modules::VirtualConstructor::Instance()->Init();
 
   if (argc != 2) {
-    std::cout << "Usage: Command <command File>" << std::endl;
+    std::cout << "Usage: async_command <command file>" << std::endl;
     return 1;
   }
 
@@ -57,28 +43,13 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
-  pthread_attr_init(&attr);
-
-  for (int i = 0; i < kPoolThreadCount; i++) {
-    info[i].thread_id = i;
-    info[i].file = &command_file;
-    res = pthread_create(&thread[i], &attr, ThreadRoutine, (void*)&info[i]);
-    if (res) {
-      std::cout << "Error: Can't create thread: " << std::to_string(i)
-                << std::endl;
-    }
+  for (auto& thread : thread_pool) {
+    thread = std::thread(ThreadRoutine, &command_file);
   }
 
-  pthread_attr_destroy(&attr);
-
-  for (int i = 0; i < kPoolThreadCount; i++) {
-    pthread_join(thread[i], &status);
-    if (status) {
-      std::cout << "Error: Joining thread: " << std::to_string(i) << std::endl;
-    }
+  for (auto& thread : thread_pool) {
+    thread.join();
   }
 
   command_file.close();
-
-  pthread_exit(NULL);
 }

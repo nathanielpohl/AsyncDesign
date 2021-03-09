@@ -3,12 +3,11 @@
 
 #include <string>
 
-#include "cmd_modules/file_command.h"
-#include "cmd_modules/virtual_constructor.h"
 #include "tools/csv_parser.h"
+#include "tools/file_command.h"
 
 namespace cmd_modules {
-class Checksum : public FileCommand {
+class Checksum : public tools::FileCommand {
  public:
   Checksum(std::string command_id);
   Checksum* Clone() { return new Checksum(command_id_); }
