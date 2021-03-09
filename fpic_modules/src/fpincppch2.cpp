@@ -36,6 +36,13 @@ std::string name(const Person& person) { return person.name; }
 
 //=============================================================================
 int FPInCppCh2::Execute() {
+  std::cout << "###################################################"
+            << std::endl;
+  std::cout << "####         Scratch pad from Chapter 2        ####"
+            << std::endl;
+  std::cout << "###################################################"
+            << std::endl;
+
   std::vector<Person> people;
   people.reserve(10);
   people.emplace_back("Maria", "Female", 73);
@@ -51,7 +58,7 @@ int FPInCppCh2::Execute() {
 
   // All female names.
   {
-    std::cout << "\n\nAll female names." << std::endl;
+    std::cout << "All female names." << std::endl;
     std::vector<Person> females;
     std::copy_if(people.begin(), people.end(), std::back_inserter(females),
                  is_female);
@@ -62,11 +69,13 @@ int FPInCppCh2::Execute() {
     for (auto& person_name : female_names) {
       std::cout << "   " << person_name << std::endl;
     }
+
+    std::cout << "\n" << std::endl;
   }
 
   // All not female names.
   {
-    std::cout << "\n\nAll not female names." << std::endl;
+    std::cout << "All not female names." << std::endl;
     std::vector<Person> not_females;
     std::copy_if(people.begin(), people.end(), std::back_inserter(not_females),
                  is_not_female);
@@ -77,12 +86,13 @@ int FPInCppCh2::Execute() {
     for (auto& person_name : not_female_names) {
       std::cout << "   " << person_name << std::endl;
     }
+
+    std::cout << "\n" << std::endl;
   }
 
-  // More effiecent split of female and not female.
+  // More efficient split of female and not female.
   {
-    std::cout << "\n\nMore effiecent split of female and not female."
-              << std::endl;
+    std::cout << "More efficient split of female and not female." << std::endl;
     auto people_copy = people;
     auto first_not_female = std::stable_partition(people_copy.begin(),
                                                   people_copy.end(), is_female);
@@ -110,6 +120,8 @@ int FPInCppCh2::Execute() {
     for (auto& person_name : not_female_names) {
       std::cout << "   " << person_name << std::endl;
     }
+
+    std::cout << "\n" << std::endl;
   }
 
   return 0;

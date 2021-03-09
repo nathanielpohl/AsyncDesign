@@ -11,8 +11,6 @@
 #include "tools/command.h"
 
 namespace cmd_modules {
-using namespace std;
-
 class VirtualConstructor {
  public:
   ~VirtualConstructor();

@@ -10,7 +10,7 @@
 #include "cmd_modules/virtual_constructor.h"
 #include "tools/command.h"
 
-static const int kPoolThreadCount = 4;
+static constexpr int kPoolThreadCount = 4;
 
 //=============================================================================
 struct ThreadInfo {
@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
   cmd_modules::VirtualConstructor::Instance()->Init();
 
   if (argc != 2) {
-    std::cout << "Usage: Command <command File>" << std::endl;
+    std::cout << "Usage: async_command <command file>" << std::endl;
     return 1;
   }
 
