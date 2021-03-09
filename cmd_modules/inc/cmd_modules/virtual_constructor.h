@@ -8,7 +8,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "cmd_modules/command.h"
+#include "tools/command.h"
 
 namespace cmd_modules {
 using namespace std;
@@ -18,12 +18,13 @@ class VirtualConstructor {
   ~VirtualConstructor();
   void Init();
   static VirtualConstructor* Instance();
-  Command* CreateCommand(istream*);
+  tools::Command* CreateCommand(std::istream* command_file);
 
  private:
   static VirtualConstructor* object_;
 
-  typedef unordered_map<string, std::unique_ptr<Command>> CommandRegistry;
+  typedef std::unordered_map<std::string, std::unique_ptr<tools::Command>>
+      CommandRegistry;
 
   CommandRegistry registry_;
   pthread_mutex_t mtx_;

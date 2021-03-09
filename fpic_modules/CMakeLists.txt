@@ -5,23 +5,23 @@ project(${LIBRARY_NAME})
 
 # Create lists of our files for this library.
 set(HEADER_FILES
-    inc/toosl/command.h
-    inc/tools/file_command.h
-    inc/tools/csv_parser.h
-    inc/tools/str_tools.h
+    inc/fpic_modules/fpincppch2.h
     )
 
 set(SOURCE_FILES
-    src/csv_parser.cpp
+    src/fpincppch2.cpp
     )
 	
 # Create our library and add our source files.
 add_library(${LIBRARY_NAME} ${SOURCE_FILES})
 
-# Make sure that when we are linked to other libraries can find our files.
+# Add our include directories. 
 target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/inc)
 
-# Link to libraries that this library uses.
+# Link to libraries that this library ueses.
 target_link_libraries(${LIBRARY_NAME}
+    tools
     #thirdparty
     )
+
+

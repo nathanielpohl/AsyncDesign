@@ -2,7 +2,7 @@
 // command.
 #include "cmd_modules/checksum.h"
 
-#include <time.h>
+#include <chrono>
 
 namespace cmd_modules {
 //=============================================================================
@@ -44,16 +44,15 @@ void Checksum::Deserialize(tools::CSVParser &params) {
 
 //=============================================================================
 int Checksum::Execute() {
-  ifstream file(filename_, ifstream::in);
+  std::ifstream file(filename_, std::ifstream::in);
 
   if (!file.is_open()) {
-    std::string error = "Error: Can't open file: " + filename_ + "\n";
-    cout << error;
+    std::cout << "Error: Can't open file: " << filename_ << std::endl;
     return -1;
   }
 
   std::string line;
-  clock_t time = clock();
+  auto start = std::chrono::steady_clock::now();
 
   while (getline(file, line)) {
     for (size_t i = 0; i < line.length(); i++) {
@@ -61,14 +60,13 @@ int Checksum::Execute() {
     }
   }
 
-  time = clock() - time;
-  double seconds = double(time) / CLOCKS_PER_SEC;
+  auto end = std::chrono::steady_clock::now();
+  std::chrono::duration<double> diff = end - start;
 
   // Single prints are viewed as atomic, create a string, and print it
-  std::string output = GetId() + ", " + filename_ + ", " +
-                       std::to_string(int(checksum_)) + ", " +
-                       std::to_string(seconds) + "\n";
-  std::cout << output;
+  std::cout << GetId() << ", " << filename_ << ", "
+            << std::to_string(int(checksum_)) << ", "
+            << std::to_string(diff.count()) << std::endl;
 
   return 0;
 }

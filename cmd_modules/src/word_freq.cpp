@@ -1,8 +1,9 @@
 // This file contains the derivative class of a word freqncy commmand
 #include "cmd_modules/word_freq.h"
 
-#include <time.h>
-#include <tools/csv_parser.h>
+#include <chrono>
+
+#include "tools/csv_parser.h"
 
 namespace cmd_modules {
 //=============================================================================
@@ -18,16 +19,15 @@ void WordFreq::Deserialize(tools::CSVParser &params) {
 
 //=============================================================================
 int WordFreq::Execute() {
-  ifstream file(filename_, ifstream::in);
+  std::ifstream file(filename_, std::ifstream::in);
 
   if (!file.is_open()) {
-    std::string error = "Error: Can't open file: " + filename_ + "\n";
-    cout << error;
+    std::cout << "Error: Can't open file: " << filename_ << std::endl;
     return -1;
   }
 
   std::string line;
-  clock_t time = clock();
+  auto start = std::chrono::steady_clock::now();
 
   while (getline(file, line)) {
     size_t find = line.find(word_);
@@ -39,14 +39,13 @@ int WordFreq::Execute() {
     } while (std::string::npos != find);
   }
 
-  time = clock() - time;
-  double seconds = double(time) / CLOCKS_PER_SEC;
+  auto end = std::chrono::steady_clock::now();
+  std::chrono::duration<double> diff = end - start;
 
   // Single prints are viewed as atomic, create a string, and print it
-  std::string output = GetId() + ", " + filename_ + ", " + word_ + ", " +
-                       std::to_string(freq_count_) + ", " +
-                       std::to_string(seconds) + "\n";
-  std::cout << output;
+  std::cout << GetId() << ", " << filename_ << ", " << word_ << ", "
+            << std::to_string(freq_count_) << ", "
+            << std::to_string(diff.count()) << std::endl;
 
   return 0;
 }

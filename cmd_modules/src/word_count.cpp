@@ -2,7 +2,7 @@
 // command
 #include "cmd_modules/word_count.h"
 
-#include <time.h>
+#include <chrono>
 
 #include "tools/csv_parser.h"
 
@@ -19,29 +19,27 @@ void WordCount::Deserialize(tools::CSVParser &params) {
 
 //=============================================================================
 int WordCount::Execute() {
-  ifstream file(filename_, ifstream::in);
+  std::ifstream file(filename_, std::ifstream::in);
 
   if (!file.is_open()) {
-    std::string error = "Error: Can't open file: " + filename_ + "\n";
-    cout << error;
+    std::cout << "Error: Can't open file: " << filename_ << std::endl;
     return -1;
   }
 
   std::string word;
-  clock_t time = clock();
+  auto start = std::chrono::steady_clock::now();
 
   while (file >> word) {
     word_count_++;
   }
 
-  time = clock() - time;
-  double seconds = double(time) / CLOCKS_PER_SEC;
+  auto end = std::chrono::steady_clock::now();
+  std::chrono::duration<double> diff = end - start;
 
   // Single prints are viewed as atomic, create a string, and print it
-  std::string output = GetId() + ", " + filename_ + ", " +
-                       std::to_string(word_count_) + ", " +
-                       std::to_string(seconds) + "\n";
-  std::cout << output;
+  std::cout << GetId() << ", " << filename_ << ", "
+            << std::to_string(word_count_) << ", "
+            << std::to_string(diff.count()) << std::endl;
 
   return 0;
 }

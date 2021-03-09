@@ -7,8 +7,8 @@
 #include <iostream>
 #include <string>
 
-#include "cmd_modules/command.h"
 #include "cmd_modules/virtual_constructor.h"
+#include "tools/command.h"
 
 static const int kPoolThreadCount = 4;
 
@@ -23,7 +23,7 @@ void* ThreadRoutine(void* data) {
   ThreadInfo* info = static_cast<ThreadInfo*>(data);
 
   while (true) {
-    cmd_modules::Command* current_command =
+    tools::Command* current_command =
         cmd_modules::VirtualConstructor::Instance()->CreateCommand(info->file);
     if (!current_command) break;
 

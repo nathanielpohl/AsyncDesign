@@ -17,10 +17,10 @@ VirtualConstructor::~VirtualConstructor() { pthread_mutex_destroy(&mtx_); }
 
 //=============================================================================
 void VirtualConstructor::Init() {
-#define REGISTER_COMMAND(scope, name, command_id)             \
-  do {                                                        \
-    auto COMMAND_##name = std::make_unique<name>(command_id); \
-    registry_[command_id] = std::move(COMMAND_##name);        \
+#define REGISTER_COMMAND(scope, name, command_id)                    \
+  do {                                                               \
+    auto COMMAND_##name = std::make_unique<scope::name>(command_id); \
+    registry_[command_id] = std::move(COMMAND_##name);               \
   } while (0);
   LIST_OF_COMMANDS(REGISTER_COMMAND);
 #undef REGISTER_COMMAND
@@ -34,7 +34,7 @@ VirtualConstructor* VirtualConstructor::Instance() {
 }
 
 //=============================================================================
-Command* VirtualConstructor::CreateCommand(istream* command_file) {
+tools::Command* VirtualConstructor::CreateCommand(std::istream* command_file) {
   tools::CSVParser params;
   std::string next_command;
 
@@ -57,7 +57,7 @@ Command* VirtualConstructor::CreateCommand(istream* command_file) {
 
     CommandRegistry::const_iterator iter = registry_.find(next_command);
     if (iter == registry_.end()) {
-      std::cout << "Error: Unregistered command: " + next_command + "\n";
+      std::cout << "Error: Unregistered command: " << next_command << std::endl;
       continue;
     }
   } while (!registry_[next_command]);

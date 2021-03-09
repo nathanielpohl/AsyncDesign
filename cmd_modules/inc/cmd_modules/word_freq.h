@@ -3,12 +3,11 @@
 
 #include <string>
 
-#include "cmd_modules/file_command.h"
-#include "cmd_modules/virtual_constructor.h"
 #include "tools/csv_parser.h"
+#include "tools/file_command.h"
 
 namespace cmd_modules {
-class WordFreq : public FileCommand {
+class WordFreq : public tools::FileCommand {
  public:
   WordFreq(std::string command_id);
   Command* Clone() { return new WordFreq(command_id_); }

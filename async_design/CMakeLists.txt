@@ -18,6 +18,7 @@ add_executable(${LIBRARY_NAME} ${SOURCE_FILES})
 
 # Link to libraries that this project ueses.
 target_link_libraries(${LIBRARY_NAME}
+    fpic_modules
     cmd_modules
     # thirdparty
     tools
