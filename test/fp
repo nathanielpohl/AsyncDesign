@@ -1,4 +1,6 @@
 # This commands file will run through all the scrtach pads of test code I
 # wanted to play with. Each chapter is from "Function Programming in C++" by
 # Ivan Cuckic.
-FPICCH2,/home/npohl/code/AsyncDesign/test/words
+#FPICCH2,/home/npohl/code/AsyncDesign/test/words
+#FPICCH3,/home/npohl/code/AsyncDesign/test/words
+FPICCH4,/home/npohl/code/AsyncDesign/test/words

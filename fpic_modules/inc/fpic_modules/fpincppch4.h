@@ -8,10 +8,10 @@
 #include "tools/csv_parser.h"
 
 namespace fpic_modules {
-class FPInCppCh2 : public tools::Command {
+class FPInCppCh4 : public tools::Command {
  public:
-  FPInCppCh2(std::string command_id);
-  FPInCppCh2* Clone() { return new FPInCppCh2(command_id_); }
+  FPInCppCh4(std::string command_id);
+  FPInCppCh4* Clone() { return new FPInCppCh4(command_id_); }
   void Deserialize(tools::CSVParser& params);
   int Execute();
 

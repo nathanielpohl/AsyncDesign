@@ -6,10 +6,14 @@ project(${LIBRARY_NAME})
 # Create lists of our files for this library.
 set(HEADER_FILES
     inc/fpic_modules/fpincppch2.h
+    inc/fpic_modules/fpincppch3.h
+    inc/fpic_modules/fpincppch4.h
     )
 
 set(SOURCE_FILES
     src/fpincppch2.cpp
+    src/fpincppch3.cpp
+    src/fpincppch4.cpp
     )
 	
 # Create our library and add our source files.

@@ -1,5 +1,5 @@
 // This file contains the scratch pad notes that I generated from working
-// through "Funcitonal Programming in C++" from Ivan Cuckic.
+// through "Functional Programming in C++" from Ivan Cuckic.
 #include "fpic_modules/fpincppch2.h"
 
 #include <iostream>
@@ -18,6 +18,7 @@ void FPInCppCh2::Deserialize(tools::CSVParser& /*params*/) {
 }
 
 //=============================================================================
+namespace {
 struct Person {
   std::string name;
   std::string gender;
@@ -33,6 +34,7 @@ bool is_not_female(const Person& person) {
 }
 
 std::string name(const Person& person) { return person.name; }
+}  // namespace
 
 //=============================================================================
 int FPInCppCh2::Execute() {
