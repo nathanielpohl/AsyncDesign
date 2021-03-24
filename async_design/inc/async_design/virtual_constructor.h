@@ -1,0 +1,31 @@
+// This file contains the class that all deveritive classes of Command
+// have to register with to be recognized by main program.
+#pragma once
+
+#include <memory>
+#include <mutex>
+#include <string>
+#include <unordered_map>
+
+#include "tools/command.h"
+
+namespace async_design {
+class VirtualConstructor {
+ public:
+  ~VirtualConstructor();
+  void Init();
+  static VirtualConstructor* Instance();
+  tools::Command* CreateCommand(std::istream* command_file);
+
+ private:
+  static VirtualConstructor* object_;
+
+  typedef std::unordered_map<std::string, std::unique_ptr<tools::Command>>
+      CommandRegistry;
+
+  CommandRegistry registry_;
+  std::mutex mtx_;
+
+  VirtualConstructor();
+};
+}  // namespace async_design
