@@ -4,6 +4,7 @@
 
 #include <chrono>
 #include <iostream>
+#include <map>
 #include <mutex>
 #include <numeric>
 #include <optional>
@@ -53,20 +54,21 @@ inline lazy_eval<F> make_lazy_eval(F&& computation) {
 }
 
 //=============================================================================
-// Template function for memoizied function results
+// Template function for memoizied function results.
 template <typename Result, typename... Args>
 auto make_memoized(Result (*f)(Args...)) {
-  std::unordered_map<std::tuple<Args...>, Result> cache;
+  // This is not a thread safe impelementation of make_memoized.
+  std::map<std::tuple<Args...>, Result> cache_;
 
   // Return a lambda with the function(f) and the cache value bound. The lambda
   // also needs to be mutable so that cache can be updated.
-  return [f, cache](Args... args) mutable -> Result {
+  return [f, cache_](Args... args) mutable -> Result {
     const auto args_tuple = std::make_tuple(args...);
-    const auto cached = cache.find(args_tuple);
+    const auto cached = cache_.find(args_tuple);
 
-    if (cache == cache.end()) {
+    if (cached == cache_.end()) {
       auto result = f(args...);
-      cache[args_tuple] = result;
+      cache_[args_tuple] = result;
       return result;
     } else {
       return cached->second;
@@ -75,6 +77,82 @@ auto make_memoized(Result (*f)(Args...)) {
 }
 
 //=============================================================================
+// Template classes for recusively memoizing. These helper will capture the
+// intermediary recursive results. IE memoize_helper() -> func() ->
+// memeoize_helper() -> func()...
+class null_param {};
+
+template <class Sig, class F>
+class memoize_helper;
+
+template <class Result, class... Args, class F>
+class memoize_helper<Result(Args...), F> {
+ private:
+  using function_type = F;
+  using arg_tuple_type = std::tuple<std::decay_t<Args>...>;
+
+  function_type computation_;
+  mutable std::map<arg_tuple_type, Result> cache_;
+  mutable std::recursive_mutex cache_mutex_;
+
+ public:
+  template <typename Function>
+  memoize_helper(Function&& computation, null_param)
+      : computation_(computation) {}
+  memoize_helper(const memoize_helper& other)
+      : computation_(other.computation_) {}
+
+  template <class... InnerArgs>
+  Result operator()(InnerArgs&&... args) const {
+    // This lock serializes all the access to the cache.
+    std::lock_guard<std::recursive_mutex> lock{cache_mutex_};
+
+    const auto args_tuple = std::make_tuple(args...);
+    const auto cached = cache_.find(args_tuple);
+
+    if (cached == cache_.end()) {
+      auto&& result = computation_(*this, std::forward<InnerArgs>(args)...);
+      cache_[args_tuple] = result;
+      return result;
+    } else {
+      return cached->second;
+    }
+  }
+};
+
+template <class Sig, class F>
+memoize_helper<Sig, std::decay_t<F>> make_memoized_r(F&& f) {
+  // Initializer list construction of a memoize_helper class.
+  return {std::forward<F>(f), null_param()};
+}
+
+// Functions specific to memoizing the Levenshtein distance. Note that lambda
+// will call it's self through a refence to the memoize_helper class, which will
+// be passed to it as the first argument LevenshteinDistance.
+auto LevenshteinDistanceMemo =
+    make_memoized_r<int(int, int, std::string, std::string)>(
+        [](auto& LevenshteinDistance, int m, int n, std::string a,
+           std::string b) {
+          // This is expenseive to copy the string so much, but thats the best
+          // way that I can come up with haveing a unique signature for all the
+          // entries in the cache of memoize_hleper.
+          auto a_temp = a;
+          auto b_temp = b;
+          a_temp.pop_back();
+          b_temp.pop_back();
+
+          int result =
+              m == 0   ? n
+              : n == 0 ? m
+                       : std::min({LevenshteinDistance(m - 1, n, a_temp, b) + 1,
+                                   LevenshteinDistance(m, n - 1, a, b_temp) + 1,
+                                   LevenshteinDistance(m - 1, n - 1, a_temp,
+                                                       b_temp) +
+                                       int(a[m - 1] != b[n - 1])});
+          std::cout << "The difference between a: " << a << " and b: " << b
+                    << " was: " << result << std::endl;
+          return result;
+        });
 
 //=============================================================================
 }  // namespace
@@ -88,9 +166,9 @@ int FPInCppCh6::Execute() {
   std::cout << "###################################################"
             << std::endl;
 
-  {  // Lazy_eval tests.
+  {  // lazy_eval tests.
     std::cout << "Lazy eval tests" << std::endl;
-    std::cout << "Create foo, of type lazy_eval<(int) -> int>. This function "
+    std::cout << "Create foo, of type lazy_eval<(int) -> int>. This function\n"
                  "should not print \"lazy eval\"."
               << std::endl;
     auto foo = make_lazy_eval([]() {
@@ -99,17 +177,19 @@ int FPInCppCh6::Execute() {
     });
     std::cout << std::endl;
 
-    std::cout << "Assign foo to an int. This should cast lazy_eval<> to an int "
-                 "implicitly, and we should see \"lazy eval\" printed."
-              << std::endl
-              << std::endl;
+    std::cout
+        << "Assign foo to an int. This should cast lazy_eval<> to an int \n"
+           "implicitly, and we should see \"lazy eval\" printed."
+        << std::endl
+        << std::endl;
 
     int bar = foo;
     std::cout << std::endl;
 
-    std::cout << "Now assign foo to another int. Here we should not see \"lazy "
-                 "eval\" printed, since the return value is cached."
-              << std::endl;
+    std::cout
+        << "Now assign foo to another int. Here we should not see \"lazy \n"
+           "eval\" printed, since the return value is cached."
+        << std::endl;
 
     int baz = foo;
     std::cout << std::endl;
@@ -119,6 +199,68 @@ int FPInCppCh6::Execute() {
     baz = bar;
 
     std::cout << std::endl;
+  }
+
+  {  // memoize tests.
+    std::cout << "###################################################"
+              << std::endl
+              << "make_memoized tests." << std::endl;
+
+    // Derefence the lambda to get to the function.
+    auto foo_memo = make_memoized(*[](int x) {
+      std::cout << std::endl
+                << "Working on value: " << x << std::endl
+                << std::endl;
+      return x;
+    });
+    std::cout << "First run of make memoized on value of 5." << std::endl;
+
+    foo_memo(5);
+
+    std::cout << std::endl
+              << "Second run on value of 5. No print out." << std::endl;
+
+    foo_memo(5);
+
+    std::cout << "First run of make memoized on value of 6. Print out."
+              << std::endl;
+
+    foo_memo(6);
+
+    std::cout << std::endl
+              << "Third run on value of 5. No print out." << std::endl;
+
+    foo_memo(5);
+
+    std::cout << std::endl;
+  }
+
+  {  // memoize levensthein distance per recursive step.
+    std::cout << "###################################################"
+              << std::endl
+              << "Levensthein distance tests." << std::endl;
+    std::string one_a = "cat condo";
+    std::string one_b = "dog houses";
+    std::cout << "There should be a lot of work to find the levensthein \n"
+                 "distance this first run."
+              << std::endl;
+    int result =
+        LevenshteinDistanceMemo(one_a.size(), one_b.size(), one_a, one_b);
+
+    std::cout << "Got the resulting distance from a: " << one_a
+              << " and b: " << one_b << " was: " << result << " edits away.\n"
+              << std::endl;
+
+    std::cout << "There should be no work to find the levensthein distance \n"
+                 "this second run."
+              << std::endl;
+    std::string two_a = "cat";
+    std::string two_b = "dog";
+    result = LevenshteinDistanceMemo(two_a.size(), two_b.size(), two_a, two_b);
+
+    std::cout << "Got the resulting distance from a: " << two_a
+              << " and b: " << two_b << " was: " << result << " edits away.\n"
+              << std::endl;
   }
 
   std::cout << std::endl;
