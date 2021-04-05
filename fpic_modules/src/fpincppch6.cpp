@@ -23,7 +23,7 @@ void FPInCppCh6::Deserialize(tools::CSVParser& /*params*/) {
 
 //=============================================================================
 namespace {
-// Template class for lazy evaluation of functions
+// Template class for lazy evaluation of functions.
 template <typename F>
 class lazy_eval {
  private:
@@ -155,6 +155,68 @@ auto LevenshteinDistanceMemo =
         });
 
 //=============================================================================
+// Template class for lazy string concatination.
+template <typename... Strings>
+class lazy_string_concat_helper;
+
+template <typename LastString, typename... Strings>
+class lazy_string_concat_helper<LastString, Strings...> {
+ private:
+  // A copy is made of the data instead of a reference, since we could have
+  // refences change underneath us unexpectedly. That could be a feature though
+  // were the lazy concat is used to set a format, and then strings are swapped
+  // out for mass processing data.
+  LastString data_;
+  lazy_string_concat_helper<Strings...> tail_;
+
+ public:
+  lazy_string_concat_helper(LastString data,
+                            lazy_string_concat_helper<Strings...> tail)
+      : data_(data), tail_(tail) {}
+  int size() const { return data_.size() + tail_.size(); }
+
+  template <typename It>
+  void save(It end) const {
+    // The structure stores data starting at the last concatinated string.
+    const auto begin = end - data_.size();
+    std::copy(data_.cbegin(), data_.cend(), begin);
+    tail_.save(begin);
+  }
+
+  operator std::string() const {
+    std::string result(size(), '\0');
+    save(result.end());
+    return result;
+  }
+
+  lazy_string_concat_helper<std::string, LastString, Strings...> operator+(
+      const std::string& other) const {
+    return lazy_string_concat_helper<std::string, LastString, Strings...>(
+        other, *this);
+  }
+};
+
+// Don't forget the base case!
+template <>
+class lazy_string_concat_helper<> {
+ public:
+  lazy_string_concat_helper() {}
+
+  int size() const { return 0; }
+
+  template <typename It>
+  void save(It) const {}
+
+  lazy_string_concat_helper<std::string> operator+(
+      const std::string& other) const {
+    return lazy_string_concat_helper<std::string>(other, *this);
+  }
+};
+
+// Since we std::string doesn't allow us to overload the '+' operator, we need
+// to append to an existing lazy_string_concat_helper.
+lazy_string_concat_helper<> lazy_concat;
+
 }  // namespace
 
 //=============================================================================
@@ -260,6 +322,27 @@ int FPInCppCh6::Execute() {
 
     std::cout << "Got the resulting distance from a: " << two_a
               << " and b: " << two_b << " was: " << result << " edits away.\n"
+              << std::endl;
+  }
+
+  {  // lazy_string_concat tests.
+    std::cout << "###################################################"
+              << std::endl
+              << "lazy_string_concat_helper tests." << std::endl;
+
+    std::string test1 = "lazy";
+    std::string test2 = "string";
+    std::string test3 = "concat";
+    std::string test4 = "test";
+
+    std::string combined = lazy_concat + "This is a test of " + test1 + "_" +
+                           test2 + "_" + test3 + "_" + test4;
+
+    std::cout << "Result stored in combined: " << combined << std::endl;
+
+    std::cout << "Result for concat in cout: "
+              << std::string(lazy_concat + test1 + "_" + test2 + "_" + test3 +
+                             "_" + test4)
               << std::endl;
   }
 
