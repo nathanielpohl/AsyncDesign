@@ -7,6 +7,7 @@
 #include "fpic_modules/fpincppch2.h"
 #include "fpic_modules/fpincppch3.h"
 #include "fpic_modules/fpincppch4.h"
+#include "fpic_modules/fpincppch6.h"
 
 #define LIST_OF_COMMANDS(COMMAND)              \
   COMMAND(cmd_modules, Checksum, "CHECKSUM")   \
@@ -14,4 +15,5 @@
   COMMAND(cmd_modules, WordFreq, "WORDFREQ")   \
   COMMAND(fpic_modules, FPInCppCh2, "FPICCH2") \
   COMMAND(fpic_modules, FPInCppCh3, "FPICCH3") \
-  COMMAND(fpic_modules, FPInCppCh4, "FPICCH4")
+  COMMAND(fpic_modules, FPInCppCh4, "FPICCH4") \
+  COMMAND(fpic_modules, FPInCppCh6, "FPICCH6")

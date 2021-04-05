@@ -1,14 +1,14 @@
 // This file contains the implmentation of virtual_constructor.h the
 // class which keeps track of all implemented commands.
-#include "cmd_modules/virtual_constructor.h"
+#include "async_design/virtual_constructor.h"
 
 #include <fstream>
 #include <iostream>
 
-#include "cmd_modules/command_modules.h"
+#include "async_design/command_modules.h"
 #include "tools/csv_parser.h"
 
-namespace cmd_modules {
+namespace async_design {
 //=============================================================================
 VirtualConstructor::VirtualConstructor() = default;
 
@@ -70,4 +70,4 @@ tools::Command* VirtualConstructor::CreateCommand(std::istream* command_file) {
 //=============================================================================
 // Initialize the Singleton to work properly.
 VirtualConstructor* VirtualConstructor::object_ = 0;
-}  // namespace cmd_modules
+}  // namespace async_design

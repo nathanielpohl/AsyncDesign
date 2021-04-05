@@ -9,7 +9,7 @@
 
 #include "tools/command.h"
 
-namespace cmd_modules {
+namespace async_design {
 class VirtualConstructor {
  public:
   ~VirtualConstructor();
@@ -28,4 +28,4 @@ class VirtualConstructor {
 
   VirtualConstructor();
 };
-}  // namespace cmd_modules
+}  // namespace async_design
