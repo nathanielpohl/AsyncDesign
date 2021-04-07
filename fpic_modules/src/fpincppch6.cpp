@@ -2,11 +2,9 @@
 // through "Functional Programming in C++" from Ivan Cuckic.
 #include "fpic_modules/fpincppch6.h"
 
-#include <chrono>
 #include <iostream>
 #include <map>
 #include <mutex>
-#include <numeric>
 #include <optional>
 #include <string>
 #include <vector>

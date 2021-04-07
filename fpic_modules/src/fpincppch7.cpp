@@ -2,12 +2,10 @@
 // through "Functional Programming in C++" from Ivan Cuckic.
 #include "fpic_modules/fpincppch7.h"
 
-#include <chrono>
+#include <algorithm>
+#include <functional>
 #include <iostream>
-#include <map>
-#include <mutex>
-#include <numeric>
-#include <optional>
+#include <ranges>
 #include <string>
 #include <vector>
 
@@ -22,7 +20,19 @@ void FPInCppCh7::Deserialize(tools::CSVParser& /*params*/) {
 }
 
 //=============================================================================
-namespace {}  // namespace
+namespace {
+struct Person {
+  std::string name;
+  std::string gender;
+  int number;
+};
+
+bool is_female(const Person& person) {
+  return 0 == person.gender.compare("Female");
+}
+
+std::string name(const Person& person) { return person.name; }
+}  // namespace
 
 //=============================================================================
 int FPInCppCh7::Execute() {
@@ -33,37 +43,60 @@ int FPInCppCh7::Execute() {
   std::cout << "###################################################"
             << std::endl;
 
-  {  // lazy_eval tests.
-    /*std::cout << "Lazy eval tests" << std::endl;
-    std::cout << "Create foo, of type lazy_eval<(int) -> int>. This function\n"
-                 "should not print \"lazy eval\"."
-              << std::endl;
-    auto foo = make_lazy_eval([]() {
-      std::cout << "lazy eval" << std::endl;
-      return 5;
-    });
+  std::vector<Person> people;
+  people.reserve(10);
+  people.emplace_back("Maria", "Female", 73);
+  people.emplace_back("Tom", "Male", 13);
+  people.emplace_back("Nathaniel", "Male", 81);
+  people.emplace_back("Alex", "Other", 54);
+  people.emplace_back("Someone", "Male", 34);
+  people.emplace_back("Tester", "Female", 75);
+  people.emplace_back("Elon", "Male", 3);
+  people.emplace_back("Sara", "Female", 41);
+  people.emplace_back("Sussie", "Female", 82);
+  people.emplace_back("Bob", "Male", 100);
+
+  {  // All female names.
+
+    // This is a lot like the work done in fpinccpsh2.cpp, but more efficient.
+    // With ranges a smart proxy iterator is created, and the filter and
+    // transform are linked up and evaluated in a lazt fashion. That means that
+    // we will traverse the poeple vector once, and only pass the elements that
+    // return true from is_female() to name(), and finally to our for loop's
+    // temp.
+    std::cout << "All the female names are: " << std::endl;
+    for (auto person_name :
+         people | std::views::filter(is_female) | std::views::transform(name)) {
+      std::cout << "   " << person_name << std::endl;
+    }
+
     std::cout << std::endl;
+  }
 
-    std::cout
-        << "Assign foo to an int. This should cast lazy_eval<> to an int \n"
-           "implicitly, and we should see \"lazy eval\" printed."
-        << std::endl
-        << std::endl;
+  {  // All not female names.
+    std::cout << "All the not female names are: " << std::endl;
+    for (auto person_name :
+         people | std::views::filter([](auto&& person) {
+           // Here I am perfect forwarding person.
+           return false == is_female(std::forward<decltype(person)>(person));
+         }) | std::views::transform(name)) {
+      std::cout << "   " << person_name << std::endl;
+    }
 
-    int bar = foo;
     std::cout << std::endl;
+  }
 
-    std::cout
-        << "Now assign foo to another int. Here we should not see \"lazy \n"
-           "eval\" printed, since the return value is cached."
-        << std::endl;
+  {  // Find the peak of a strictly increasing then decreasing vector.
+    std::vector<int> numbers{1, 2, 3, 4, 5, 6, 7, 4, 3, 2};
 
-    int baz = foo;
-    std::cout << std::endl;
+    auto peak = std::ranges::adjacent_find(numbers, std::ranges::greater());
 
-    // Get rid of unused variable errors.
-    bar = baz;
-    baz = bar;*/
+    if (peak != numbers.end()) {
+      std::cout << "Found peak at: " << std::distance(numbers.begin(), peak)
+                << std::endl;
+    } else {
+      std::cout << "No Peak found" << std::endl;
+    }
 
     std::cout << std::endl;
   }
