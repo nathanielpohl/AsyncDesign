@@ -7,6 +7,7 @@
 #include <iostream>
 #include <ranges>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace fpic_modules {
@@ -98,6 +99,64 @@ int FPInCppCh7::Execute() {
       std::cout << "No Peak found" << std::endl;
     }
 
+    std::cout << std::endl;
+  }
+
+  {  // Given two vecotrs of key:count, sorted by count, return one list sorted
+     // by count after merging.
+    std::vector<std::tuple<std::string, int>> collection_1{{"a", 30}, {"b", 5}};
+    std::vector<std::tuple<std::string, int>> collection_2{{"c", 20}, {"b", 7}};
+    std::vector<std::tuple<std::string, int>> result{collection_1};
+
+    result.reserve(collection_1.size() + collection_2.size());
+    result.insert(result.end(), collection_2.begin(), collection_2.end());
+
+    // Helper for printing out the tuples
+    auto print_help = [](const std::vector<std::tuple<std::string, int>>& vec) {
+      std::cout << "{";
+      for (auto& tup : vec) {
+        std::cout << "{" << std::get<0>(tup) << ", "
+                  << std::to_string(std::get<1>(tup)) << "}";
+      }
+      std::cout << "}";
+    };
+
+    std::cout << "Merge: ";
+    print_help(collection_1);
+    std::cout << " and ";
+    print_help(collection_2);
+    std::cout << std::endl << "Result: ";
+
+    std::ranges::sort(result, [](auto& lhs, auto& rhs) {
+      return std::get<0>(lhs) < std::get<0>(rhs);
+    });
+
+    bool first = true;
+    std::tuple<std::string, int> temp = result[0];
+
+    for (auto& curr_tup : result | std::views::reverse) {
+      if (first) {
+        first = false;
+        continue;
+      }
+      if (0 == std::get<0>(curr_tup).compare(std::get<0>(temp))) {
+        auto new_tup = std::make_tuple(
+            std::get<0>(curr_tup), std::get<1>(curr_tup) + std::get<1>(temp));
+        curr_tup.swap(new_tup);
+      }
+      temp = curr_tup;
+    }
+
+    auto removable = std::ranges::unique(result, [](auto& lhs, auto& rhs) {
+      return std::get<0>(lhs) == std::get<0>(rhs);
+    });
+    result.erase(removable.begin(), removable.end());
+
+    std::ranges::sort(result, [](auto& lhs, auto& rhs) {
+      return std::get<1>(lhs) > std::get<1>(rhs);
+    });
+
+    print_help(result);
     std::cout << std::endl;
   }
 
