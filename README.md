@@ -1,3 +1,6 @@
+:warning: | This README is outdate as of 5/27/2021, sorry! Read/modify the setup.sh to get started.
+:---: | :---
+
 # AsyncDesign
 An asynchronous, independent-command running program.
 
