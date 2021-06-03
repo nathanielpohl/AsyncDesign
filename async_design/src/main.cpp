@@ -10,26 +10,18 @@
 #include "async_design/virtual_constructor.h"
 #include "tools/command.h"
 
+namespace {
 static const int kPoolThreadCount = std::thread::hardware_concurrency();
 
 //=============================================================================
-void ThreadRoutine(std::istream* file) {
-  while (true) {
-    tools::Command* current_command =
-        async_design::VirtualConstructor::Instance()->CreateCommand(file);
-    if (!current_command) break;
-
-    current_command->Execute();
-    delete current_command;
-  }
+void ThreadRoutine() {
+  async_design::VirtualConstructor::Instance()->Execute();
 }
+}  // namespace
 
 //=============================================================================
 int main(int argc, char* argv[]) {
   std::vector<std::thread> thread_pool(kPoolThreadCount);
-
-  // Initialize the virtual constructor class.
-  async_design::VirtualConstructor::Instance()->Init();
 
   if (argc != 2) {
     std::cout << "Usage: async_command <command file>" << std::endl;
@@ -43,8 +35,11 @@ int main(int argc, char* argv[]) {
     return 1;
   }
 
+  // Initialize the virtual constructor class.
+  async_design::VirtualConstructor::Instance()->Init(&command_file);
+
   for (auto& thread : thread_pool) {
-    thread = std::thread(ThreadRoutine, &command_file);
+    thread = std::thread(ThreadRoutine);
   }
 
   for (auto& thread : thread_pool) {

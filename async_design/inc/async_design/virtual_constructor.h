@@ -2,6 +2,7 @@
 // have to register with to be recognized by main program.
 #pragma once
 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -13,19 +14,22 @@ namespace async_design {
 class VirtualConstructor {
  public:
   ~VirtualConstructor();
-  void Init();
+  void Init(std::ifstream* command_file);
+  void Execute();
   static VirtualConstructor* Instance();
-  tools::Command* CreateCommand(std::istream* command_file);
 
  private:
+  VirtualConstructor();
+  tools::Command* CreateCommand();
+
   static VirtualConstructor* object_;
 
   typedef std::unordered_map<std::string, std::unique_ptr<tools::Command>>
       CommandRegistry;
 
+  std::atomic_bool init_ = false;
   CommandRegistry registry_;
   std::mutex mtx_;
-
-  VirtualConstructor();
+  std::ifstream* command_file_;
 };
 }  // namespace async_design
