@@ -57,23 +57,30 @@ std::vector<entry> MergeCollections(const std::vector<entry>& collection_1,
   bool first = true;
   entry temp = result[result.size() - 1];
 
-  // Merge the count of elements with the same name.
+  // Merge the count of elements with the same name. Do this operation backwards
+  // and accumulate the count in the first element. This will allow us to use
+  // std::unique later on which will preserve the first of many elements. IE.
+  // Original: {{a:5},{a:1},{a:3}}
+  // Merged:   {{a:9},{a:4},{a:3}}
+  // Unique:   {{a:9}}
   for (auto& curr_ent : result | std::views::reverse) {
     if (first) {
       first = false;
       continue;
     }
     if (0 == curr_ent.name.compare(temp.name)) {
-      entry new_ent(curr_ent.name, curr_ent.count + temp.count);
-      curr_ent = new_ent;
+      curr_ent.count = curr_ent.count + temp.count;
     }
     temp = curr_ent;
   }
 
+  // Use unique to preserve only the first entry which will have the total for
+  // all entries.
   auto removable = std::ranges::unique(
       result, [](auto& lhs, auto& rhs) { return lhs.name == rhs.name; });
   result.erase(removable.begin(), removable.end());
 
+  // Sort by total count.
   std::ranges::sort(result,
                     [](auto& lhs, auto& rhs) { return lhs.count > rhs.count; });
 
