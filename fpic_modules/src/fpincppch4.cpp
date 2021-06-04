@@ -2,6 +2,8 @@
 // through "Functional Programming in C++" from Ivan Cuckic.
 #include "fpic_modules/fpincppch4.h"
 
+#include <glog/logging.h>
+
 #include <iostream>
 #include <numeric>
 #include <sstream>
@@ -72,7 +74,7 @@ auto sort_by_frequency(const std::vector<std::pair<int, std::string>>& items) {
 
 void print_pairs(const std::vector<std::pair<int, std::string>>& items) {
   for (const auto& item : items) {
-    std::cout << std::to_string(item.first) << ", " << item.second << std::endl;
+    LOG(INFO) << std::to_string(item.first) << ", " << item.second;
   }
 }
 
@@ -85,25 +87,20 @@ void print_common_words(const std::string& text) {
 
 //=============================================================================
 int FPInCppCh4::Execute() {
-  std::cout << "###################################################"
-            << std::endl;
-  std::cout << "####         Scratch pad from Chapter 4        ####"
-            << std::endl;
-  std::cout << "###################################################"
-            << std::endl;
+  LOG(INFO) << "###################################################";
+  LOG(INFO) << "####         Scratch pad from Chapter 4        ####";
+  LOG(INFO) << "###################################################";
 
   std::string test_str =
       "this is a random string with lot of repeating words to follow this is "
       "is is is is random string length random";
 
-  std::cout << "test_str: "
-            << "\'" << test_str << "\'" << std::endl;
+  LOG(INFO) << "test_str: "
+            << "\'" << test_str << "\'";
   print_common_words(test_str);
 
-  std::cout << std::endl << "Blank str: \'\'" << std::endl;
+  LOG(INFO) << "Blank str: \'\'";
   print_common_words("");
-
-  std::cout << std::endl;
 
   return 0;
 }

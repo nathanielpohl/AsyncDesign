@@ -2,6 +2,8 @@
 // class which keeps track of all implemented commands.
 #include "async_design/virtual_constructor.h"
 
+#include <glog/logging.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -16,7 +18,13 @@ VirtualConstructor::VirtualConstructor() = default;
 VirtualConstructor::~VirtualConstructor() = default;
 
 //=============================================================================
-void VirtualConstructor::Init() {
+void VirtualConstructor::Init(std::ifstream* command_file) {
+  if (init_) {
+    LOG(ERROR) << "VirtualConsturctor is already initialized.";
+    return;
+  }
+  init_ = true;
+
 #define REGISTER_COMMAND(scope, name, command_id)                    \
   do {                                                               \
     auto COMMAND_##name = std::make_unique<scope::name>(command_id); \
@@ -24,6 +32,25 @@ void VirtualConstructor::Init() {
   } while (0);
   LIST_OF_COMMANDS(REGISTER_COMMAND);
 #undef REGISTER_COMMAND
+
+  command_file_ = command_file;
+}
+
+//=============================================================================
+void VirtualConstructor::Execute() {
+  if (init_ == false) {
+    LOG(ERROR) << "VirtualConstructor is not initailized.";
+    return;
+  }
+
+  while (true) {
+    tools::Command* current_command =
+        async_design::VirtualConstructor::Instance()->CreateCommand();
+    if (!current_command) break;
+
+    current_command->Execute();
+    delete current_command;
+  }
 }
 
 //=============================================================================
@@ -34,18 +61,18 @@ VirtualConstructor* VirtualConstructor::Instance() {
 }
 
 //=============================================================================
-tools::Command* VirtualConstructor::CreateCommand(std::istream* command_file) {
+tools::Command* VirtualConstructor::CreateCommand() {
   tools::CSVParser params;
   std::string next_command;
 
   // Get a line that isn't commented or empty
   do {
-    if (command_file->eof()) {
+    if (command_file_->eof()) {
       return NULL;
     }
 
     mtx_.lock();
-    getline(*command_file, next_command);
+    getline(*command_file_, next_command);
     mtx_.unlock();
 
     if (next_command.empty() || (next_command[0] == '#')) {
@@ -57,7 +84,7 @@ tools::Command* VirtualConstructor::CreateCommand(std::istream* command_file) {
 
     CommandRegistry::const_iterator iter = registry_.find(next_command);
     if (iter == registry_.end()) {
-      std::cout << "Error: Unregistered command: " << next_command << std::endl;
+      LOG(ERROR) << "Unregistered command: " << next_command;
       continue;
     }
   } while (!registry_[next_command]);

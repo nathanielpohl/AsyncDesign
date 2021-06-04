@@ -2,6 +2,8 @@
 // command.
 #include "cmd_modules/checksum.h"
 
+#include <glog/logging.h>
+
 #include <chrono>
 
 namespace cmd_modules {
@@ -47,7 +49,7 @@ int Checksum::Execute() {
   std::ifstream file(filename_, std::ifstream::in);
 
   if (!file.is_open()) {
-    std::cout << "Error: Can't open file: " << filename_ << std::endl;
+    LOG(ERROR) << "Can't open file: " << filename_;
     return -1;
   }
 
@@ -64,9 +66,9 @@ int Checksum::Execute() {
   std::chrono::duration<double> diff = end - start;
 
   // Single prints are viewed as atomic, create a string, and print it
-  std::cout << GetId() << ", " << filename_ << ", "
+  LOG(INFO) << GetId() << ", " << filename_ << ", "
             << std::to_string(int(checksum_)) << ", "
-            << std::to_string(diff.count()) << std::endl;
+            << std::to_string(diff.count());
 
   return 0;
 }

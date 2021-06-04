@@ -2,6 +2,8 @@
 // through "Functional Programming in C++" from Ivan Cuckic.
 #include "fpic_modules/fpincppch2.h"
 
+#include <glog/logging.h>
+
 #include <iostream>
 #include <numeric>
 #include <string>
@@ -38,12 +40,9 @@ std::string name(const Person& person) { return person.name; }
 
 //=============================================================================
 int FPInCppCh2::Execute() {
-  std::cout << "###################################################"
-            << std::endl;
-  std::cout << "####         Scratch pad from Chapter 2        ####"
-            << std::endl;
-  std::cout << "###################################################"
-            << std::endl;
+  LOG(INFO) << "###################################################";
+  LOG(INFO) << "####         Scratch pad from Chapter 2        ####";
+  LOG(INFO) << "###################################################";
 
   std::vector<Person> people;
   people.reserve(10);
@@ -60,41 +59,37 @@ int FPInCppCh2::Execute() {
 
   // All female names.
   {
-    std::cout << "All female names." << std::endl;
+    LOG(INFO) << "All female names.";
     std::vector<Person> females;
     std::copy_if(people.begin(), people.end(), std::back_inserter(females),
                  is_female);
     std::vector<std::string> female_names(females.size());
     std::transform(females.cbegin(), females.cend(), female_names.begin(),
                    name);
-    std::cout << "All the female names are: " << std::endl;
+    LOG(INFO) << "All the female names are: ";
     for (auto& person_name : female_names) {
-      std::cout << "   " << person_name << std::endl;
+      LOG(INFO) << "   " << person_name;
     }
-
-    std::cout << "\n" << std::endl;
   }
 
   // All not female names.
   {
-    std::cout << "All not female names." << std::endl;
+    LOG(INFO) << "All not female names.";
     std::vector<Person> not_females;
     std::copy_if(people.begin(), people.end(), std::back_inserter(not_females),
                  is_not_female);
     std::vector<std::string> not_female_names(not_females.size());
     std::transform(not_females.cbegin(), not_females.cend(),
                    not_female_names.begin(), name);
-    std::cout << "All the not female names are: " << std::endl;
+    LOG(INFO) << "All the not female names are: ";
     for (auto& person_name : not_female_names) {
-      std::cout << "   " << person_name << std::endl;
+      LOG(INFO) << "   " << person_name;
     }
-
-    std::cout << "\n" << std::endl;
   }
 
   // More efficient split of female and not female.
   {
-    std::cout << "More efficient split of female and not female." << std::endl;
+    LOG(INFO) << "More efficient split of female and not female.";
     auto people_copy = people;
     auto first_not_female = std::stable_partition(people_copy.begin(),
                                                   people_copy.end(), is_female);
@@ -103,27 +98,24 @@ int FPInCppCh2::Execute() {
     std::vector<std::string> not_female_names(
         std::distance(first_not_female, people_copy.end()));
 
-    std::cout << "Female count: " << std::to_string(female_names.capacity())
-              << std::endl;
-    std::cout << "Not female count: "
-              << std::to_string(not_female_names.capacity()) << std::endl;
+    LOG(INFO) << "Female count: " << std::to_string(female_names.capacity());
+    LOG(INFO) << "Not female count: "
+              << std::to_string(not_female_names.capacity());
 
     std::transform(people_copy.begin(), first_not_female, female_names.begin(),
                    name);
     std::transform(first_not_female, people_copy.end(),
                    not_female_names.begin(), name);
 
-    std::cout << "All the female names are: " << std::endl;
+    LOG(INFO) << "All the female names are: ";
     for (auto& person_name : female_names) {
-      std::cout << "   " << person_name << std::endl;
+      LOG(INFO) << "   " << person_name;
     }
 
-    std::cout << "All the not female names are: " << std::endl;
+    LOG(INFO) << "All the not female names are: ";
     for (auto& person_name : not_female_names) {
-      std::cout << "   " << person_name << std::endl;
+      LOG(INFO) << "   " << person_name;
     }
-
-    std::cout << "\n" << std::endl;
   }
 
   return 0;

@@ -1,6 +1,8 @@
 // This file contains the derivative class of a word freqncy commmand
 #include "cmd_modules/word_freq.h"
 
+#include <glog/logging.h>
+
 #include <chrono>
 
 #include "tools/csv_parser.h"
@@ -22,7 +24,7 @@ int WordFreq::Execute() {
   std::ifstream file(filename_, std::ifstream::in);
 
   if (!file.is_open()) {
-    std::cout << "Error: Can't open file: " << filename_ << std::endl;
+    LOG(ERROR) << "Can't open file: " << filename_;
     return -1;
   }
 
@@ -43,9 +45,9 @@ int WordFreq::Execute() {
   std::chrono::duration<double> diff = end - start;
 
   // Single prints are viewed as atomic, create a string, and print it
-  std::cout << GetId() << ", " << filename_ << ", " << word_ << ", "
+  LOG(INFO) << GetId() << ", " << filename_ << ", " << word_ << ", "
             << std::to_string(freq_count_) << ", "
-            << std::to_string(diff.count()) << std::endl;
+            << std::to_string(diff.count());
 
   return 0;
 }

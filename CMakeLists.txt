@@ -10,6 +10,9 @@ set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR})
 
 project (command)
 
+find_package(glog 0.5.0 REQUIRED)
+find_package(gflags REQUIRED)
+
 # Submodules of async_design
 add_subdirectory(tools)
 #add_subdirectory(thirdparty)

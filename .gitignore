@@ -1,4 +1,6 @@
 # Ignore the build directory
 *.autosave
+*.swp
+.DS_Store
 build/*
 CMakeLists.txt.user

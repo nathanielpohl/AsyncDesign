@@ -2,6 +2,8 @@
 // through "Functional Programming in C++" from Ivan Cuckic.
 #include "fpic_modules/fpincppch6.h"
 
+#include <glog/logging.h>
+
 #include <iostream>
 #include <map>
 #include <mutex>
@@ -147,8 +149,8 @@ auto LevenshteinDistanceMemo =
                                    LevenshteinDistance(m - 1, n - 1, a_temp,
                                                        b_temp) +
                                        int(a[m - 1] != b[n - 1])});
-          std::cout << "The difference between a: " << a << " and b: " << b
-                    << " was: " << result << std::endl;
+          LOG(INFO) << "The difference between a: \"" << a << "\" and b: \""
+                    << b << "\" was: " << result;
           return result;
         });
 
@@ -219,114 +221,86 @@ lazy_string_concat_helper<> lazy_concat;
 
 //=============================================================================
 int FPInCppCh6::Execute() {
-  std::cout << "###################################################"
-            << std::endl;
-  std::cout << "####         Scratch pad from Chapter 6        ####"
-            << std::endl;
-  std::cout << "###################################################"
-            << std::endl;
+  LOG(INFO) << "###################################################";
+  LOG(INFO) << "####         Scratch pad from Chapter 6        ####";
+  LOG(INFO) << "###################################################";
 
   {  // lazy_eval tests.
-    std::cout << "Lazy eval tests" << std::endl;
-    std::cout << "Create foo, of type lazy_eval<(int) -> int>. This function\n"
-                 "should not print \"lazy eval\"."
-              << std::endl;
+    LOG(INFO) << "Lazy eval tests";
+    LOG(INFO) << "Create foo, of type lazy_eval<(int) -> int>. This function "
+                 "should not print \"lazy eval\".";
     auto foo = make_lazy_eval([]() {
-      std::cout << "lazy eval" << std::endl;
+      LOG(INFO) << "lazy eval";
       return 5;
     });
-    std::cout << std::endl;
 
-    std::cout
-        << "Assign foo to an int. This should cast lazy_eval<> to an int \n"
-           "implicitly, and we should see \"lazy eval\" printed."
-        << std::endl
-        << std::endl;
+    LOG(INFO) << "Assign foo to an int. This should cast lazy_eval<> to an int "
+                 "implicitly, and we should see \"lazy eval\" printed.";
 
     int bar = foo;
-    std::cout << std::endl;
 
-    std::cout
-        << "Now assign foo to another int. Here we should not see \"lazy \n"
-           "eval\" printed, since the return value is cached."
-        << std::endl;
+    LOG(INFO) << "Now assign foo to another int. Here we should not see \"lazy "
+                 "eval\" printed, since the return value is cached.";
 
     int baz = foo;
-    std::cout << std::endl;
 
     // Get rid of unused variable errors.
     bar = baz;
     baz = bar;
-
-    std::cout << std::endl;
   }
 
   {  // memoize tests.
-    std::cout << "###################################################"
-              << std::endl
-              << "make_memoized tests." << std::endl;
+    LOG(INFO) << "###################################################";
+    LOG(INFO) << "make_memoized() tests.";
 
     // Derefence the lambda to get to the function.
     auto foo_memo = make_memoized(*[](int x) {
-      std::cout << std::endl
-                << "Working on value: " << x << std::endl
-                << std::endl;
+      LOG(INFO) << "Working on value: " << x;
       return x;
     });
-    std::cout << "First run of make memoized on value of 5." << std::endl;
+    LOG(INFO) << "First run of make memoized on value of 5.";
 
     foo_memo(5);
 
-    std::cout << std::endl
-              << "Second run on value of 5. No print out." << std::endl;
+    LOG(INFO) << "Second run on value of 5. No print out.";
 
     foo_memo(5);
 
-    std::cout << "First run of make memoized on value of 6. Print out."
-              << std::endl;
+    LOG(INFO) << "First run of make memoized on value of 6. Print out.";
 
     foo_memo(6);
 
-    std::cout << std::endl
-              << "Third run on value of 5. No print out." << std::endl;
+    LOG(INFO) << "Third run on value of 5. No print out.";
 
     foo_memo(5);
-
-    std::cout << std::endl;
   }
 
   {  // memoize levensthein distance per recursive step.
-    std::cout << "###################################################"
-              << std::endl
-              << "Levensthein distance tests." << std::endl;
+    LOG(INFO) << "###################################################";
+    LOG(INFO) << "Levensthein distance tests.";
     std::string one_a = "cat condo";
     std::string one_b = "dog houses";
-    std::cout << "There should be a lot of work to find the levensthein \n"
-                 "distance this first run."
-              << std::endl;
+    LOG(INFO) << "There should be a lot of work to find the levensthein "
+                 "distance this first run.";
     int result =
         LevenshteinDistanceMemo(one_a.size(), one_b.size(), one_a, one_b);
 
-    std::cout << "Got the resulting distance from a: " << one_a
-              << " and b: " << one_b << " was: " << result << " edits away.\n"
-              << std::endl;
+    LOG(INFO) << "Got the resulting distance from a: " << one_a
+              << " and b: " << one_b << " was: " << result << " edits away.";
 
-    std::cout << "There should be no work to find the levensthein distance \n"
-                 "this second run."
-              << std::endl;
+    LOG(INFO) << "There should be no work to find the levensthein distance "
+                 "this second run.";
     std::string two_a = "cat";
     std::string two_b = "dog";
     result = LevenshteinDistanceMemo(two_a.size(), two_b.size(), two_a, two_b);
 
-    std::cout << "Got the resulting distance from a: " << two_a
-              << " and b: " << two_b << " was: " << result << " edits away.\n"
-              << std::endl;
+    LOG(INFO) << "Got the resulting distance from a: " << two_a
+              << " and b: " << two_b << " was: " << result << " edits away.";
   }
 
   {  // lazy_string_concat tests.
-    std::cout << "###################################################"
-              << std::endl
-              << "lazy_string_concat_helper tests." << std::endl;
+    LOG(INFO) << "###################################################";
+    LOG(INFO) << "lazy_string_concat_helper tests.";
 
     std::string test1 = "lazy";
     std::string test2 = "string";
@@ -336,15 +310,12 @@ int FPInCppCh6::Execute() {
     std::string combined = lazy_concat + "This is a test of " + test1 + "_" +
                            test2 + "_" + test3 + "_" + test4;
 
-    std::cout << "Result stored in combined: " << combined << std::endl;
+    LOG(INFO) << "Result stored in combined: " << combined;
 
-    std::cout << "Result for concat in cout: "
+    LOG(INFO) << "Result for concat: "
               << std::string(lazy_concat + test1 + "_" + test2 + "_" + test3 +
-                             "_" + test4)
-              << std::endl;
+                             "_" + test4);
   }
-
-  std::cout << std::endl;
 
   return 0;
 }
