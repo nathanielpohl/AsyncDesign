@@ -149,8 +149,8 @@ auto LevenshteinDistanceMemo =
                                    LevenshteinDistance(m - 1, n - 1, a_temp,
                                                        b_temp) +
                                        int(a[m - 1] != b[n - 1])});
-          LOG(INFO) << "The difference between a: " << a << " and b: " << b
-                    << " was: " << result;
+          LOG(INFO) << "The difference between a: \"" << a << "\" and b: \""
+                    << b << "\" was: " << result;
           return result;
         });
 
@@ -227,23 +227,20 @@ int FPInCppCh6::Execute() {
 
   {  // lazy_eval tests.
     LOG(INFO) << "Lazy eval tests";
-    LOG(INFO) << "Create foo, of type lazy_eval<(int) -> int>. This function\n"
+    LOG(INFO) << "Create foo, of type lazy_eval<(int) -> int>. This function "
                  "should not print \"lazy eval\".";
     auto foo = make_lazy_eval([]() {
       LOG(INFO) << "lazy eval";
       return 5;
     });
 
-    LOG(INFO)
-        << "Assign foo to an int. This should cast lazy_eval<> to an int \n"
-           "implicitly, and we should see \"lazy eval\" printed.\n";
+    LOG(INFO) << "Assign foo to an int. This should cast lazy_eval<> to an int "
+                 "implicitly, and we should see \"lazy eval\" printed.";
 
     int bar = foo;
-    LOG(INFO) << '\n';
 
-    LOG(INFO)
-        << "Now assign foo to another int. Here we should not see \"lazy \n"
-           "eval\" printed, since the return value is cached.";
+    LOG(INFO) << "Now assign foo to another int. Here we should not see \"lazy "
+                 "eval\" printed, since the return value is cached.";
 
     int baz = foo;
 
@@ -254,18 +251,18 @@ int FPInCppCh6::Execute() {
 
   {  // memoize tests.
     LOG(INFO) << "###################################################";
-    LOG(INFO) << "make_memoized tests.";
+    LOG(INFO) << "make_memoized() tests.";
 
     // Derefence the lambda to get to the function.
     auto foo_memo = make_memoized(*[](int x) {
-      LOG(INFO) << "Working on value: " << x << '\n';
+      LOG(INFO) << "Working on value: " << x;
       return x;
     });
     LOG(INFO) << "First run of make memoized on value of 5.";
 
     foo_memo(5);
 
-    LOG(INFO) << "\nSecond run on value of 5. No print out.";
+    LOG(INFO) << "Second run on value of 5. No print out.";
 
     foo_memo(5);
 
@@ -283,22 +280,22 @@ int FPInCppCh6::Execute() {
     LOG(INFO) << "Levensthein distance tests.";
     std::string one_a = "cat condo";
     std::string one_b = "dog houses";
-    LOG(INFO) << "There should be a lot of work to find the levensthein \n"
+    LOG(INFO) << "There should be a lot of work to find the levensthein "
                  "distance this first run.";
     int result =
         LevenshteinDistanceMemo(one_a.size(), one_b.size(), one_a, one_b);
 
     LOG(INFO) << "Got the resulting distance from a: " << one_a
-              << " and b: " << one_b << " was: " << result << " edits away.\n";
+              << " and b: " << one_b << " was: " << result << " edits away.";
 
-    LOG(INFO) << "There should be no work to find the levensthein distance \n"
+    LOG(INFO) << "There should be no work to find the levensthein distance "
                  "this second run.";
     std::string two_a = "cat";
     std::string two_b = "dog";
     result = LevenshteinDistanceMemo(two_a.size(), two_b.size(), two_a, two_b);
 
     LOG(INFO) << "Got the resulting distance from a: " << two_a
-              << " and b: " << two_b << " was: " << result << " edits away.\n";
+              << " and b: " << two_b << " was: " << result << " edits away.";
   }
 
   {  // lazy_string_concat tests.

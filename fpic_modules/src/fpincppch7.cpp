@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <ranges>
+#include <sstream>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -96,6 +97,8 @@ int FPInCppCh7::Execute() {
   LOG(INFO) << "####         Scratch pad from Chapter 7        ####";
   LOG(INFO) << "###################################################";
 
+  LOG(INFO) << "Working with our people structs and std::range tests.";
+
   std::vector<Person> people;
   people.reserve(10);
   people.emplace_back("Maria", "Female", 73);
@@ -135,6 +138,9 @@ int FPInCppCh7::Execute() {
     }
   }
 
+  LOG(INFO) << "###################################################";
+  LOG(INFO) << "Find the peak with std::range test.";
+
   {  // Find the peak of a strictly increasing then decreasing vector.
     std::vector<int> numbers{1, 2, 3, 4, 5, 6, 7, 4, 3, 2};
 
@@ -147,16 +153,21 @@ int FPInCppCh7::Execute() {
     }
   }
 
+  LOG(INFO) << "###################################################";
+  LOG(INFO) << "Merging key:value stores tests.";
+
   // Given two vectors of key:count, sorted by count, return one list sorted
   // by count after merging.
 
   // Helper for printing out the vector of entrys.
   auto print_help = [](const std::vector<entry>& vec) {
-    std::cout << "{";
+    std::stringstream serialized;
+    serialized << "{";
     for (auto& ent : vec) {
-      std::cout << "{" << ent.name << ", " << std::to_string(ent.count) << "}";
+      serialized << "{" << ent.name << ", " << std::to_string(ent.count) << "}";
     }
-    std::cout << "}" << std::endl;
+    serialized << "}";
+    return serialized.str();
   };
 
   {
@@ -164,14 +175,13 @@ int FPInCppCh7::Execute() {
     std::vector<entry> collection_1{{"a", 30}, {"b", 5}};
     std::vector<entry> collection_2{{"a", 20}, {"c", 7}};
 
-    LOG(INFO) << "Merge:";
-    print_help(collection_1);
-    print_help(collection_2);
-    LOG(INFO) << "Expect:\n{{a, 50}{c, 7}{b, 5}}";
+    LOG(INFO) << "Merge at the begining.";
+    LOG(INFO) << "Merge: " << print_help(collection_1) << " and "
+              << print_help(collection_2);
+    LOG(INFO) << "Expect: {{a, 50}{c, 7}{b, 5}}";
 
     auto result = MergeCollections(collection_1, collection_2);
-    LOG(INFO) << "Result:";
-    print_help(result);
+    LOG(INFO) << "Result: " << print_help(result);
   }
 
   {
@@ -179,14 +189,13 @@ int FPInCppCh7::Execute() {
     std::vector<entry> collection_1{{"a", 30}, {"b", 5}};
     std::vector<entry> collection_2{{"c", 20}, {"b", 7}};
 
-    LOG(INFO) << "Merge:";
-    print_help(collection_1);
-    print_help(collection_2);
-    LOG(INFO) << "Expect:\n{{a, 30}{c, 20}{b, 12}}";
+    LOG(INFO) << "Merge in the middle.";
+    LOG(INFO) << "Merge: " << print_help(collection_1) << " and "
+              << print_help(collection_2);
+    LOG(INFO) << "Expect: {{a, 30}{c, 20}{b, 12}}";
 
     auto result = MergeCollections(collection_1, collection_2);
-    LOG(INFO) << "Result:";
-    print_help(result);
+    LOG(INFO) << "Result: " << print_help(result);
   }
 
   {
@@ -194,13 +203,12 @@ int FPInCppCh7::Execute() {
     std::vector<entry> collection_1{{"a", 30}, {"c", 5}};
     std::vector<entry> collection_2{{"b", 20}, {"c", 7}};
 
-    LOG(INFO) << "Merge:";
-    print_help(collection_1);
-    print_help(collection_2);
-    LOG(INFO) << "Expect:\n{{a, 30}{b, 20}{c, 12}}";
+    LOG(INFO) << "Merge at the end.";
+    LOG(INFO) << "Merge: " << print_help(collection_1) << " and "
+              << print_help(collection_2);
+    LOG(INFO) << "Expect: {{a, 30}{b, 20}{c, 12}}";
     auto result = MergeCollections(collection_1, collection_2);
-    LOG(INFO) << "Result:";
-    print_help(result);
+    LOG(INFO) << "Result: " << print_help(result);
   }
 
   return 0;

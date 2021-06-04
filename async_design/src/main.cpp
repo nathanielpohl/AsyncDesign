@@ -10,7 +10,6 @@
 #include <thread>
 
 #include "async_design/virtual_constructor.h"
-#include "tools/command.h"
 
 namespace {
 static const int kPoolThreadCount = std::thread::hardware_concurrency();
@@ -25,6 +24,8 @@ void ThreadRoutine() {
 int main(int argc, char* argv[]) {
   // Initialize Google’s logging library.
   google::InitGoogleLogging(argv[0]);
+  // Set logtostderr so INFO goes to stdout.
+  FLAGS_logtostderr = 1;
 
   std::vector<std::thread> thread_pool(kPoolThreadCount);
 

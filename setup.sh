@@ -9,7 +9,7 @@ if [ ! -d "$TOP_LEVEL_CODE_DIR" ]; then
 	mkdir "$TOP_LEVEL_CODE_DIR"
 fi
 
-# Manually run these steps to set up QT if.
+# Manually run these steps to set up QT if you are developing.
 FILE=~/qtcreator-4.4.1
 if [ ! -d "$FILE" ]; then
 	printf "\n\n"

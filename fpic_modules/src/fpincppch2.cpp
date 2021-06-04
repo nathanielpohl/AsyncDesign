@@ -70,8 +70,6 @@ int FPInCppCh2::Execute() {
     for (auto& person_name : female_names) {
       LOG(INFO) << "   " << person_name;
     }
-
-    LOG(INFO) << "\n";
   }
 
   // All not female names.
@@ -87,8 +85,6 @@ int FPInCppCh2::Execute() {
     for (auto& person_name : not_female_names) {
       LOG(INFO) << "   " << person_name;
     }
-
-    LOG(INFO) << "\n";
   }
 
   // More efficient split of female and not female.
@@ -120,8 +116,6 @@ int FPInCppCh2::Execute() {
     for (auto& person_name : not_female_names) {
       LOG(INFO) << "   " << person_name;
     }
-
-    LOG(INFO) << '\n';
   }
 
   return 0;

@@ -99,10 +99,8 @@ int FPInCppCh4::Execute() {
             << "\'" << test_str << "\'";
   print_common_words(test_str);
 
-  LOG(INFO) << "\nBlank str: \'\'";
+  LOG(INFO) << "Blank str: \'\'";
   print_common_words("");
-
-  LOG(INFO) << '\n';
 
   return 0;
 }
