@@ -29,15 +29,11 @@ int main(int argc, char* argv[]) {
 
   std::vector<std::thread> thread_pool(kPoolThreadCount);
 
-  if (argc != 2) {
-    LOG(FATAL) << "Usage: async_design_bin <command file>";
-  }
+  LOG_IF(FATAL, argc != 2) << "Usage: async_design_bin <command file>";
 
   std::ifstream command_file(argv[1]);
 
-  if (!command_file.is_open()) {
-    LOG(FATAL) << "Error: Can't open file.";
-  }
+  LOG_IF(FATAL, !command_file.is_open()) << "Can't open specified file.";
 
   // Initialize the virtual constructor class.
   async_design::VirtualConstructor::Instance()->Init(&command_file);
