@@ -2,6 +2,8 @@
 // spin off a thread pool, and than complete the work that is assigned
 // in the command file that is passed in on the command line.
 
+#include <glog/logging.h>
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -21,18 +23,19 @@ void ThreadRoutine() {
 
 //=============================================================================
 int main(int argc, char* argv[]) {
+  // Initialize Google’s logging library.
+  google::InitGoogleLogging(argv[0]);
+
   std::vector<std::thread> thread_pool(kPoolThreadCount);
 
   if (argc != 2) {
-    std::cout << "Usage: async_command <command file>" << std::endl;
-    return 1;
+    LOG(FATAL) << "Usage: async_design_bin <command file>";
   }
 
   std::ifstream command_file(argv[1]);
 
   if (!command_file.is_open()) {
-    std::cout << "Error: Can't open file." << std::endl;
-    return 1;
+    LOG(FATAL) << "Error: Can't open file.";
   }
 
   // Initialize the virtual constructor class.

@@ -29,9 +29,6 @@ target_link_libraries(${LIBRARY_NAME}
 
 ###############################################
 # Create our executable.
-##############################################
-# Create our executable.
 add_executable(${LIBRARY_NAME}_bin src/main.cpp)
 
-target_link_libraries(${LIBRARY_NAME}_bin ${LIBRARY_NAME})
-
+target_link_libraries(${LIBRARY_NAME}_bin ${LIBRARY_NAME} glog gflags)

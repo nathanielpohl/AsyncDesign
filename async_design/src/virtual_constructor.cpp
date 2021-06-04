@@ -2,6 +2,8 @@
 // class which keeps track of all implemented commands.
 #include "async_design/virtual_constructor.h"
 
+#include <glog/logging.h>
+
 #include <fstream>
 #include <iostream>
 
@@ -18,7 +20,7 @@ VirtualConstructor::~VirtualConstructor() = default;
 //=============================================================================
 void VirtualConstructor::Init(std::ifstream* command_file) {
   if (init_) {
-    std::cout << "VirtualConsturctor is already initialized." << std::endl;
+    LOG(ERROR) << "VirtualConsturctor is already initialized.";
     return;
   }
   init_ = true;
@@ -37,7 +39,7 @@ void VirtualConstructor::Init(std::ifstream* command_file) {
 //=============================================================================
 void VirtualConstructor::Execute() {
   if (init_ == false) {
-    std::cout << "VirtualConstructor is not initailized." << std::endl;
+    LOG(ERROR) << "VirtualConstructor is not initailized.";
     return;
   }
 
@@ -82,7 +84,7 @@ tools::Command* VirtualConstructor::CreateCommand() {
 
     CommandRegistry::const_iterator iter = registry_.find(next_command);
     if (iter == registry_.end()) {
-      std::cout << "Error: Unregistered command: " << next_command << std::endl;
+      LOG(ERROR) << "Unregistered command: " << next_command;
       continue;
     }
   } while (!registry_[next_command]);

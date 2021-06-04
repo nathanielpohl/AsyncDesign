@@ -2,6 +2,8 @@
 // through "Functional Programming in C++" from Ivan Cuckic.
 #include "fpic_modules/fpincppch7.h"
 
+#include <glog/logging.h>
+
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -90,12 +92,9 @@ std::vector<entry> MergeCollections(const std::vector<entry>& collection_1,
 
 //=============================================================================
 int FPInCppCh7::Execute() {
-  std::cout << "###################################################"
-            << std::endl;
-  std::cout << "####         Scratch pad from Chapter 7        ####"
-            << std::endl;
-  std::cout << "###################################################"
-            << std::endl;
+  LOG(INFO) << "###################################################";
+  LOG(INFO) << "####         Scratch pad from Chapter 7        ####";
+  LOG(INFO) << "###################################################";
 
   std::vector<Person> people;
   people.reserve(10);
@@ -118,26 +117,22 @@ int FPInCppCh7::Execute() {
     // we will traverse the poeple vector once, and only pass the elements that
     // return true from is_female() to name(), and finally to our for loop's
     // temp.
-    std::cout << "All the female names are: " << std::endl;
+    LOG(INFO) << "All the female names are: ";
     for (auto person_name :
          people | std::views::filter(is_female) | std::views::transform(name)) {
-      std::cout << "   " << person_name << std::endl;
+      LOG(INFO) << "   " << person_name;
     }
-
-    std::cout << std::endl;
   }
 
   {  // All not female names.
-    std::cout << "All the not female names are: " << std::endl;
+    LOG(INFO) << "All the not female names are: ";
     for (auto person_name :
          people | std::views::filter([](auto&& person) {
            // Here I am perfect forwarding person.
            return false == is_female(std::forward<decltype(person)>(person));
          }) | std::views::transform(name)) {
-      std::cout << "   " << person_name << std::endl;
+      LOG(INFO) << "   " << person_name;
     }
-
-    std::cout << std::endl;
   }
 
   {  // Find the peak of a strictly increasing then decreasing vector.
@@ -146,13 +141,10 @@ int FPInCppCh7::Execute() {
     auto peak = std::ranges::adjacent_find(numbers, std::ranges::greater());
 
     if (peak != numbers.end()) {
-      std::cout << "Found peak at: " << std::distance(numbers.begin(), peak)
-                << std::endl;
+      LOG(INFO) << "Found peak at: " << std::distance(numbers.begin(), peak);
     } else {
-      std::cout << "No Peak found" << std::endl;
+      LOG(INFO) << "No Peak found";
     }
-
-    std::cout << std::endl;
   }
 
   // Given two vectors of key:count, sorted by count, return one list sorted
@@ -166,58 +158,50 @@ int FPInCppCh7::Execute() {
     }
     std::cout << "}" << std::endl;
   };
+
   {
     // Front merge
     std::vector<entry> collection_1{{"a", 30}, {"b", 5}};
     std::vector<entry> collection_2{{"a", 20}, {"c", 7}};
 
-    std::cout << "Merge:" << std::endl;
+    LOG(INFO) << "Merge:";
     print_help(collection_1);
     print_help(collection_2);
-    std::cout << "Expect:" << std::endl << "{{a, 50}{c, 7}{b, 5}}" << std::endl;
+    LOG(INFO) << "Expect:\n{{a, 50}{c, 7}{b, 5}}";
 
     auto result = MergeCollections(collection_1, collection_2);
-    std::cout << "Result:" << std::endl;
+    LOG(INFO) << "Result:";
     print_help(result);
-
-    std::cout << std::endl;
   }
+
   {
     // Middle merge
     std::vector<entry> collection_1{{"a", 30}, {"b", 5}};
     std::vector<entry> collection_2{{"c", 20}, {"b", 7}};
 
-    std::cout << "Merge:" << std::endl;
+    LOG(INFO) << "Merge:";
     print_help(collection_1);
     print_help(collection_2);
-    std::cout << "Expect:" << std::endl
-              << "{{a, 30}{c, 20}{b, 12}}" << std::endl;
+    LOG(INFO) << "Expect:\n{{a, 30}{c, 20}{b, 12}}";
 
     auto result = MergeCollections(collection_1, collection_2);
-    std::cout << "Result:" << std::endl;
+    LOG(INFO) << "Result:";
     print_help(result);
-
-    std::cout << std::endl;
   }
+
   {
     // End merge
     std::vector<entry> collection_1{{"a", 30}, {"c", 5}};
     std::vector<entry> collection_2{{"b", 20}, {"c", 7}};
 
-    std::cout << "Merge:" << std::endl;
+    LOG(INFO) << "Merge:";
     print_help(collection_1);
     print_help(collection_2);
-    std::cout << "Expect:" << std::endl
-              << "{{a, 30}{b, 20}{c, 12}}" << std::endl;
-
+    LOG(INFO) << "Expect:\n{{a, 30}{b, 20}{c, 12}}";
     auto result = MergeCollections(collection_1, collection_2);
-    std::cout << "Result:" << std::endl;
+    LOG(INFO) << "Result:";
     print_help(result);
-
-    std::cout << std::endl;
   }
-
-  std::cout << std::endl;
 
   return 0;
 }
