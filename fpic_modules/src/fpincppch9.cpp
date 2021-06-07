@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <numeric>
+#include <random>
+#include <sstream>
 #include <string>
 #include <variant>
 #include <vector>
@@ -41,10 +43,9 @@ int FPInCppCh9::Execute() {
   {
     // Sum type state machine for Tennis.
     class Tennis {
-     private:
-      enum class points { love, fifteen, thirty };
-
+     public:
       enum class player { player_1, player_2 };
+      enum class points { love, fifteen, thirty };
 
       struct normal_scoring {
         points player_1_points;
@@ -66,7 +67,6 @@ int FPInCppCh9::Execute() {
         player winner;
       };
 
-     public:
       Tennis() {}
 
       void PointForPlayer(const player player_scored) {
@@ -79,7 +79,7 @@ int FPInCppCh9::Execute() {
             } else {
               state_ = forty_scoring(player::player_1, normal->player_2_points);
             }
-          } else {
+          } else if (player_scored == player::player_2) {
             if (normal->player_2_points == points::love) {
               normal->player_2_points = points::fifteen;
             } else if (normal->player_2_points == points::fifteen) {
@@ -87,6 +87,8 @@ int FPInCppCh9::Execute() {
             } else {
               state_ = forty_scoring(player::player_2, normal->player_1_points);
             }
+          } else {
+            LOG(FATAL) << "Unimplemented player";
           }
         } else if (auto forty = std::get_if<forty_scoring>(&state_)) {
           if (player_scored == forty->leading_player) {
@@ -104,7 +106,6 @@ int FPInCppCh9::Execute() {
           if (duce) {
             // Unused variable duce error.
           }
-
           state_ = advantage_scoring(player_scored);
         } else if (auto advantage = std::get_if<advantage_scoring>(&state_)) {
           if (player_scored == advantage->player_with_advantage) {
@@ -112,18 +113,85 @@ int FPInCppCh9::Execute() {
           } else {
             state_ = duce_scoring();
           }
+        } else if (auto winner = std::get_if<winner_scoring>(&state_)) {
+          if (winner) {
+            // Unused variable error.
+          }
+          LOG(ERROR) << "What are you doing, the game is already won!";
         } else {
-          LOG(INFO) << "What are you doing, the game is already won!";
+          LOG(FATAL) << "Unimplemented state";
         }
+      }
+
+      std::string Score() {
+        std::stringstream score;
+        if (auto normal = std::get_if<normal_scoring>(&state_)) {
+          score << "Player 1: " << ThirtyScoreString(normal->player_1_points)
+                << ", Player 2: " << ThirtyScoreString(normal->player_2_points);
+        } else if (auto forty = std::get_if<forty_scoring>(&state_)) {
+          score << "Player 1: ";
+          if (player::player_1 == forty->leading_player) {
+            score << "40, Player 2: "
+                  << ThirtyScoreString(forty->other_player_points);
+          } else {
+            score << ThirtyScoreString(forty->other_player_points)
+                  << ", Player 2: 40";
+          }
+        } else if (auto duce = std::get_if<duce_scoring>(&state_)) {
+          if (duce) {
+            // Unused variable error.
+          }
+          score << "Duce";
+        } else if (auto advantage = std::get_if<advantage_scoring>(&state_)) {
+          if (player::player_1 == advantage->player_with_advantage) {
+            score << "Player 1: Advantage";
+          } else {
+            score << "Player 2: Advantage";
+          }
+        } else if (auto winner = std::get_if<winner_scoring>(&state_)) {
+          if (player::player_1 == winner->winner) {
+            score << "Player 1: Winner";
+          } else {
+            score << "Player 2: Winner";
+          }
+        } else {
+          LOG(FATAL) << "Unimplemented state";
+        }
+        return score.str();
       }
 
      private:
       std::variant<normal_scoring, forty_scoring, duce_scoring,
                    advantage_scoring, winner_scoring>
           state_{normal_scoring(points::love, points::love)};
+
+      std::string ThirtyScoreString(points points_val) {
+        if (points_val == points::love) {
+          return "love";
+        } else if (points_val == points::fifteen) {
+          return "15";
+        } else {
+          return "30";
+        }
+      }
     };
 
     Tennis match;
+
+    // Setup random number generator, and simulate 10 rounds of Tennis.
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(1, 2);
+    for (int round = 0; round < 10; round++) {
+      if (distrib(gen) == 1) {
+        match.PointForPlayer(Tennis::player::player_1);
+        LOG(INFO) << "Player 1 socred";
+      } else {
+        match.PointForPlayer(Tennis::player::player_2);
+        LOG(INFO) << "Player 2 scored";
+      }
+      LOG(INFO) << "    " << match.Score();
+    }
   }
 
   return 0;
