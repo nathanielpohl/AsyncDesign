@@ -10,6 +10,7 @@ set(HEADER_FILES
     inc/fpic_modules/fpincppch4.h
     inc/fpic_modules/fpincppch6.h
     inc/fpic_modules/fpincppch7.h
+    inc/fpic_modules/fpincppch9.h
     )
 
 set(SOURCE_FILES
@@ -18,6 +19,7 @@ set(SOURCE_FILES
     src/fpincppch4.cpp
     src/fpincppch6.cpp
     src/fpincppch7.cpp
+    src/fpincppch9.cpp
     )
 	
 # Create our library and add our source files.
