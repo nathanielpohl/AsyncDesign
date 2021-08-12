@@ -4,6 +4,7 @@
 #include "cmd_modules/checksum.h"
 #include "cmd_modules/word_count.h"
 #include "cmd_modules/word_freq.h"
+#include "fpic_modules/fpincppch10.h"
 #include "fpic_modules/fpincppch2.h"
 #include "fpic_modules/fpincppch3.h"
 #include "fpic_modules/fpincppch4.h"
@@ -20,4 +21,5 @@
   COMMAND(fpic_modules, FPInCppCh4, "FPICCH4") \
   COMMAND(fpic_modules, FPInCppCh6, "FPICCH6") \
   COMMAND(fpic_modules, FPInCppCh7, "FPICCH7") \
-  COMMAND(fpic_modules, FPInCppCh9, "FPICCH9")
+  COMMAND(fpic_modules, FPInCppCh9, "FPICCH9") \
+  COMMAND(fpic_modules, FPInCppCh10, "FPICCH10")
