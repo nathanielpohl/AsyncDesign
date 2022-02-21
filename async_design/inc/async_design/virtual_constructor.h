@@ -24,8 +24,8 @@ class VirtualConstructor {
 
   static VirtualConstructor* object_;
 
-  typedef std::unordered_map<std::string, std::unique_ptr<tools::Command>>
-      CommandRegistry;
+  using CommandRegistry =
+      std::unordered_map<std::string, std::unique_ptr<tools::Command>>;
 
   std::atomic_bool init_ = false;
   CommandRegistry registry_;

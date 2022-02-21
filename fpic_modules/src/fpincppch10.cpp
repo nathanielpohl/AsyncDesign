@@ -5,8 +5,6 @@
 #include <glog/logging.h>
 
 #include <functional>
-//#include <iostream>
-//#include <numeric>
 #include <ranges>
 #include <string>
 #include <vector>
@@ -52,8 +50,6 @@ int FPInCppCh10::Execute() {
   LOG(INFO) << "####         Scratch pad from Chapter 10       ####";
   LOG(INFO) << "###################################################";
 
-  LOG(INFO) << "###################################################";
-
   LOG(INFO) << "Functors and Monads";
   LOG(INFO) << "A class template F is a functor if it has transform (or map) "
                "functions defined on it.";
@@ -61,7 +57,7 @@ int FPInCppCh10::Execute() {
                "returns the same functor instance.";
   LOG(INFO) << " - Transforming a functor with one function followed by "
                "another is the same as their composite.";
-  LOG(INFO) << "Monads  is a functor that has a function defined on it that "
+  LOG(INFO) << "Monads are a functor that has a function defined on it that "
                "removes one layer of nesting.";
   LOG(INFO) << " - mbind() : M<M<T>> -> M<T>";
 
