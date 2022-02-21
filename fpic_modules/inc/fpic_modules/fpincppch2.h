@@ -14,8 +14,6 @@ class FPInCppCh2 : public tools::Command {
   FPInCppCh2* Clone() { return new FPInCppCh2(command_id_); }
   void Deserialize(tools::CSVParser& params);
   int Execute();
-
- private:
 };
 
 }  // namespace fpic_modules

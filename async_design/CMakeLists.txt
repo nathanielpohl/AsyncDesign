@@ -23,6 +23,7 @@ target_include_directories(${LIBRARY_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/inc)
 target_link_libraries(${LIBRARY_NAME}
     cmd_modules
     fpic_modules
+    interview
     # thirdparty
     tools
     )

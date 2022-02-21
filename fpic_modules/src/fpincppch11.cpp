@@ -131,7 +131,7 @@ class Curried {
   }
 
  public:
-  // This constructor that will likely mostly be called by the user.
+  // This constructor that will most likely be called by the user.
   Curried(Function function, CapturedArgs... args)
       : function_(function),
         captured_args_(CaptureByCopy(std::move(args)...)) {}
@@ -146,7 +146,7 @@ class Curried {
     auto all_args = std::tuple_cat(captured_args_, std::move(new_args));
 
     if constexpr (std::is_invocable<Function, CapturedArgs..., NewArgs...>()) {
-      // is_invokable_v() says that the types of the args line up with the
+      // is_invocable() says that the types of the args line up with the
       // function signature, so we can return a result.
       return std::apply(function_, all_args);
     } else {
@@ -216,29 +216,29 @@ int FPInCppCh11::Execute() {
       LOG(ERROR) << "Got sum_iterable(): " << iterable_result
                  << " and sume_collection(): " << collection_results;
     }
+  }
 
-    {
-      // Test sum switcher.
-      std::vector<int> values{3, 12, 3, 13, 5};
+  {
+    // Test sum switcher.
+    std::vector<int> values{3, 12, 3, 13, 5};
 
-      auto result = sum_mine(values);
+    auto result = sum_mine(values);
 
-      LOG(INFO) << "sum_mine() returned the result: " << result;
-    }
+    LOG(INFO) << "sum_mine() returned the result: " << result;
+  }
 
-    {
-      // Test curried.
-      auto test = [](int a, std::string b) {
-        LOG(INFO) << "\tNumber: " << a << " String: " << b;
-      };
-      auto test_curried = Curried{test};
+  {
+    // Test curried.
+    auto test = [](int a, std::string b) {
+      LOG(INFO) << "\tNumber: " << a << " String: " << b;
+    };
+    auto test_curried = Curried{test};
 
-      test_curried(5)("five");
+    test_curried(5)("five");
 
-      auto test_curried_6 = test_curried(6);
-      test_curried_6("six");
-      test_curried_6("seven");
-    }
+    auto test_curried_6 = test_curried(6);
+    test_curried_6("six");
+    test_curried_6("seven");
   }
 
   return 0;
